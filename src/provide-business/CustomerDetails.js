@@ -13,7 +13,7 @@ function CustomerDetails() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(async () => {
         if (user) {
-            await axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/get-customers/${user}`)
+            await axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/customer/get-customers/${user}`)
                 .then(res => {
                     if (res.data) {
                         setData(res.data);
@@ -29,7 +29,7 @@ function CustomerDetails() {
     }, [user])
    
     const getCustomerIdHandler = async (id, user) => {
-        await axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/get-customer-details/${user}/${id}`)
+        await axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/customer/get-customer-details/${user}/${id}`)
             .then(res => {
                 if (res.data) {
                     redirectEditPage.push({

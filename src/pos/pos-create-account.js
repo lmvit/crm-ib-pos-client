@@ -50,7 +50,7 @@ function PosRegisterDetails() {
             branch_name: values.branch_name.toLowerCase(),
             account_number: values.account_number
         }
-        axios.post(CrmforPosService.CrmforPosService.baseURL+`/api/pos/validate-details`,obj)
+        axios.post(CrmforPosService.CrmforPosService.baseURL+`/api/pos/login/validate-details`,obj)
         .then(res=>{
             if(res.data === validateRows[0]){
                 return window.alert(validateRows[0]);

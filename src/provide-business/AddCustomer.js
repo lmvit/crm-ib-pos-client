@@ -29,7 +29,7 @@ function Addcustomer() {
         const aboutController = new AbortController()
         const token = sessionStorage.getItem('token');
         setId(await parseJwt(token))
-         axios.get(CrmforPosService.CrmforPosService.baseURL + '/api/get-location')
+         axios.get(CrmforPosService.CrmforPosService.baseURL + '/api/pos/customer/get-location')
         .then(res => setLocation(res.data))
         .catch(err=>console.log(err))
         return ()=>{
@@ -38,7 +38,7 @@ function Addcustomer() {
     }, [])
     useEffect(()=>{
         const aboutController = new AbortController()
-         axios.get(CrmforPosService.CrmforPosService.baseURL+`/api/pos/get-customers/${user}`)
+         axios.get(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/get-customers/${user}`)
         .then(res=>{
             if(res.data){
                 setCustData(res.data)
@@ -87,7 +87,7 @@ function Addcustomer() {
 
     const selectBranchHandler=async(e,formik)=>{
         formik.handleChange(e);
-        await axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/get-branches/${e.target.value}`)
+        await axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/customer/get-branches/${e.target.value}`)
                .then(res => setBranches(res.data))
                .catch(err => console.log(err))
     }
@@ -97,7 +97,7 @@ function Addcustomer() {
             posId : user,
             aadhar : values.aadhar_number
         }
-        axios.post(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer-details/exists`,customerExists)
+        axios.post(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/customer-details/exists`,customerExists)
         .then(res=>{
             if(res.data === 'not found'){
                 const uploadFiles =  checkValidFiles();
@@ -106,7 +106,7 @@ function Addcustomer() {
                         pos_id : id.pos_id
                     }
                     const customerDetails = {...values,...files,...pos_id};
-                    axios.post(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer-details`,customerDetails)
+                    axios.post(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/customer-details`,customerDetails)
                     .then(res=>{
                         if(res.data.status === 200){
                             alert('Customer Details Added Successfully');
@@ -129,7 +129,6 @@ function Addcustomer() {
                 return false;
             }
         })
-       
     }
 
     const checkValidFiles =()=> {
@@ -171,9 +170,9 @@ function Addcustomer() {
                     [name] : window.btoa(e.target.result)
                 }))
             }
-        }
-        
+        }  
     }
+    
     return (
         <>
             <Formik
@@ -272,7 +271,7 @@ function Addcustomer() {
                                 </div>
                             </div>
                             <div>
-                                <input type="submit" className="btn btn-dark ml-lg-3 ml-md-4 my-2" />
+                                <input type="submit" className="btn btn-dark ml-lg-3 ml-md-4 my-2"/>
                             </div>
                         </Form>
                     )

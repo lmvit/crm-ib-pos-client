@@ -25,7 +25,7 @@ function LifeInsuranceTransaction() {
 
     const onSubmit = (values,onSubmitProps)=>{
         console.log(values)
-        axios.post(CrmforPosService.CrmforPosService.baseURL+`/api/pos/get-customers-by-date/${user}`,values)
+        axios.post(CrmforPosService.CrmforPosService.baseURL+`/api/pos/lifeInsuranceTransaction/get-customers-by-date/${user}`,values)
         .then(res=>setCustomers(res.data))
         .catch(err=>console.log(err)) 
     }

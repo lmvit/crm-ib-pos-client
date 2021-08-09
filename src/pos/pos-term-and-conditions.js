@@ -22,17 +22,15 @@ function PosTerms() {
     let from=2021,to=2024;
     let fromDate = new Date(`2021-05-31`);
     let toDate = new Date(`${fromDate.getFullYear()+3}-05-30`);
-    // console.log(date.toDateString(),toDate.toDateString())
+    
     if(date.toDateString() === toDate.toDateString()){
         fromDate = new Date(`${date.getFullYear()}-05-31`);
         toDate = new Date(`${date.getFullYear()+3}-05-30`);
         from = fromDate.getFullYear();
-        // console.log(from)
         to = toDate.getFullYear();
-        // console.log(to)
     }
     const onSubmitHandler=()=>{
-        axios.post(CrmforPosService.CrmforPosService.baseURL + `/api/pos/register/details`, data)
+        axios.post(CrmforPosService.CrmforPosService.baseURL + `/api/pos/login/register/details`, data)
             .then(res => {
                 if(res.data === 'successfully inserted'){
                     window.alert('Successfully Added');

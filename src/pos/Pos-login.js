@@ -20,8 +20,7 @@ function Poslogin() {
     }
 
     const onSubmit = async (value,onSubmitProps) => {
-        // console.log('value', value);
-        axios.post(CrmforPosService.CrmforPosService.baseURL+'/api/pos/pos-login',value)
+        axios.post(CrmforPosService.CrmforPosService.baseURL+'/api/pos/login/pos-login',value)
         .then(res=>{
             if(res.data.message === 'failed'){
                 onSubmitProps.resetForm();

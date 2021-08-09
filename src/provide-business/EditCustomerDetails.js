@@ -72,10 +72,10 @@ function EditCustomerDetails() {
             aadhar : values.aadhar_number,
             customerId : values.custId
         }
-        axios.post(CrmforPosService.CrmforPosService.baseURL+`/api/pos/update-customer-details/exists`,customerExists)
+        axios.post(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/update-customer-details/exists`,customerExists)
         .then(res=>{
             if(res.data === 'not found'){
-                axios.put(CrmforPosService.CrmforPosService.baseURL+`/api/pos/update-customer-details/${initialValues.custId}/${user}`,values)
+                axios.put(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/update-customer-details/${initialValues.custId}/${user}`,values)
                 .then(res=>{
                     if(res.data === 'updated successfully'){
                         window.alert('customer details updated successfully');
@@ -103,7 +103,7 @@ function EditCustomerDetails() {
 
     const selectBranchHandler = async (e, formik) => {
         formik.handleChange(e);
-        await axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/get-branches/${e.target.value}`)
+        await axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/customer/get-branches/${e.target.value}`)
             .then(res => setBranches(res.data))
             .catch(err => console.log(err))
     }
@@ -115,7 +115,7 @@ function EditCustomerDetails() {
 
     useEffect(async () => {
         if (initialValues.branch !== '') {
-            await axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/get-branches/${initialValues.locations}`)
+            await axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/customer/get-branches/${initialValues.locations}`)
                 .then(res => {
                     // console.log(res.data)
                     setBranches(res.data);
@@ -174,7 +174,7 @@ function EditCustomerDetails() {
            aadhar : result
        }
         setUploadAadhar(value=>!value);
-        axios.put(CrmforPosService.CrmforPosService.baseURL+`/api/pos/update-aadhar/${initialValues.custId}/${user}`,aadhar)
+        axios.put(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/update-aadhar/${initialValues.custId}/${user}`,aadhar)
         .then(res=>{
             if(res.data === 'successfull'){
                 // window.alert('updated Successfully');
@@ -190,7 +190,7 @@ function EditCustomerDetails() {
             pan : result
         }
         setUploadPan(value=>!value);
-        axios.put(CrmforPosService.CrmforPosService.baseURL+`/api/pos/update-pan/${initialValues.custId}/${user}`,pan)
+        axios.put(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/update-pan/${initialValues.custId}/${user}`,pan)
         .then(res=>{
             if(res.data === 'successfull'){
                 return true;
@@ -205,7 +205,7 @@ function EditCustomerDetails() {
             photo : result
         }
         setUploadPhoto(value=>!value);
-        axios.put(CrmforPosService.CrmforPosService.baseURL+`/api/pos/update-photo/${initialValues.custId}/${user}`,photo)
+        axios.put(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/update-photo/${initialValues.custId}/${user}`,photo)
         .then(res=>{
             if(res.data === 'successfull'){
                 return true;
@@ -220,7 +220,7 @@ function EditCustomerDetails() {
             passbook : result
         }
         setUploadPassbook(value=>!value);
-        axios.put(CrmforPosService.CrmforPosService.baseURL+`/api/pos/update-passbook/${initialValues.custId}/${user}`,passbook)
+        axios.put(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/update-passbook/${initialValues.custId}/${user}`,passbook)
         .then(res=>{
             if(res.data === 'successfull'){
                 return true;

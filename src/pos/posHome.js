@@ -13,8 +13,12 @@ import EditCustomerDetails from '../provide-business/EditCustomerDetails';
 import Routing from '../protectedRoute/Routing';
 import axios from 'axios';
 import CrmforPosService from '../../src/config/index';
-import LifeInsuranceTransaction from '../BusinessTransaction/life-insurance-transaction';
-import GeneralInsuranceTransaction from '../BusinessTransaction/general-insurance-transaction';
+// import LifeInsuranceTransaction from '../BusinessTransaction/life-insurance-transaction';
+// import GeneralInsuranceTransaction from '../BusinessTransaction/general-insurance-transaction';
+import GeneralInsuranceTransaction from '../Transcations/GeneralInsurance';
+// import GeneralInsuranceTransaction from './transcations/general-insurance-data1';
+import LifeInsuranceTransaction from '../Transcations/LifeInsurance';
+import LifeInsuranceData from '../Transcations/LifeInsuranceForm';
 
 export const UserContext = React.createContext();
 const PosHome = (props) => {
@@ -32,7 +36,7 @@ const PosHome = (props) => {
     } else {
       const id = await parseJwt(posId);
       setRole(id.pos_id);
-      axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/loginId-username/loginId-username/${id.pos_id}`)
+      axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/login/loginId-username/loginId-username/${id.pos_id}`)
         .then(res => setUserName(res.data[0].first_name.toLocaleUpperCase()))
         .catch(err => console.log(err))
     }
@@ -147,6 +151,7 @@ const PosHome = (props) => {
                   <Routing path="/home/edit-customer-details" component={EditCustomerDetails} />
                   <Routing path="/home/business-transaction/life-insurance-transaction" component={LifeInsuranceTransaction}/>
                   <Routing path="/home/business-transaction/general-insurance-transaction" component={GeneralInsuranceTransaction}/>
+                  <Routing path="/home/life-insurance-transactions-data" component={LifeInsuranceData}/>
                 </Switch>
               </section>
             </div>
