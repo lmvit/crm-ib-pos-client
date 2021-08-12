@@ -70,6 +70,7 @@ function EditCustomerDetails() {
         const customerExists = {
             posId : user,
             aadhar : values.aadhar_number,
+            pancard : values.pancard,
             customerId : values.custId
         }
         axios.post(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/update-customer-details/exists`,customerExists)

@@ -15,8 +15,6 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import SelectDates from '../helper/SelectDates';
 
 const LifeInsurance = (props) => {
-
-
     // Dates
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
@@ -41,14 +39,13 @@ const LifeInsurance = (props) => {
     const [showPendingTransactions, setShowPendingTransactions] = useState(true);
     const [dailog, setDailog] = useState({ open: false, message: "" });
 
-    const employeeId = useContext(UserContext);
+    const posId = useContext(UserContext);
     const history = useHistory();
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(async () => {
-        if (employeeId) {
+        if (posId) {
             try {
-                axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/life-transactions/pending-transactions/${employeeId}`).then(response => {
+                axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/life-transactions/pending-transactions/${posId}`).then(response => {
                     setPendingTransactionsFetched(response.data.customerArray);
                     setPendingTransactions(response.data.customerArray);
                     setPendingTransactionsTable(true);
@@ -56,13 +53,13 @@ const LifeInsurance = (props) => {
                 }).catch(error => {
                     setTableLoading(false)
                 })
-                // const fetchedEmployees = await axios.get(CrmforInsuranceService.CrmforInsuranceService.baseURL + `/api/life-transactions/dependent-life-transactions/${employeeId}`);
+                // const fetchedEmployees = await axios.get(CrmforInsuranceService.CrmforInsuranceService.baseURL + `/api/life-transactions/dependent-life-transactions/${posId}`);
                 // console.log(fetchedEmployees)
             } catch (error) {
                 setTableLoading(false)
             }
         }
-    }, [employeeId, dailog.open])
+    }, [posId, dailog.open])
 
 
     const newSearchHandler = (event) => {
@@ -80,14 +77,13 @@ const LifeInsurance = (props) => {
         setEndDate(endDate)
     }
 
-
     const editHandler = (id) => setDailog({ open: true, message: id });
     const closeDailog = () =>  setDailog({ open: false });
 
-    const addHandler = (pan_number) => {
+    const addHandler = (pan_number,customer_id) => {
         history.push({
             pathname: '/home/life-insurance-transactions-data',
-            state: { pan_number }
+            state: { pan_number,customer_id }
         })
     }
 
@@ -95,7 +91,7 @@ const LifeInsurance = (props) => {
         let datesData ={  start_date : startDate,  end_date : endDate }
 
         setTableLoading(true)
-        axios.post(CrmforPosService.CrmforPosService.baseURL + `/api/life-transactions/transactions-between-dates/${employeeId}`, datesData).then(response => {
+        axios.post(CrmforPosService.CrmforPosService.baseURL + `/api/life-transactions/transactions-between-dates/${posId}`, datesData).then(response => {
             setNewTransactions(response.data.data)
             setShowPendingTransactions(false)
             setNewTransactionsFetched(response.data.data)
@@ -109,7 +105,6 @@ const LifeInsurance = (props) => {
             setTableLoading(false)
         })
     }
-
 
     return (
         <Fragment>

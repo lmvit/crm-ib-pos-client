@@ -1,19 +1,14 @@
+/*eslint-disable */
 import React, { Fragment, useState, useEffect, useContext, useRef } from 'react';
 import { Formik, Form } from 'formik';
 import { useLocation, useHistory } from 'react-router-dom';
 import { Input, Select, DateField, DefaultInput, OptionsSelect } from '../helper/Input';
 import { GeneralValidationFunction } from '../helper/validations';
 import { customerInitialValue, GeneralInitialValueFunction, TransactionCustomerFunction } from '../helper/initialValues';
-import { net } from '../helper/helper';
 import AlertDialog from './components/Dailog';
 import axios from 'axios';
-import CrmforInsuranceService from '../config/index';
-import {UserContext} from '../pos/posHome';
-
-
-
-
-
+import CrmforPosService from '../config/index';
+import {UserContext} from '../pos/posHome';                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
 
 const GeneralInsuranceTransaction = () => {
     const [data, setData] = useState({ ...customerInitialValue });
@@ -40,31 +35,24 @@ const GeneralInsuranceTransaction = () => {
 
     const pdfRef1 = useRef(null);
     const pdfRef2 = useRef(null);
-    const employeeId = useContext(UserContext);
+    const posId = useContext(UserContext);
 
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(async () => {
-        !location.state.pan_number && alert("Please go back and select transaction again.");
-        let response = await axios.post(CrmforInsuranceService.CrmforInsuranceService.baseURL + '/api/customer/pan-number', { pan_number: location.state.pan_number });
-        let responseData = await response.data.data;
-        setCustomerData(TransactionCustomerFunction(responseData && responseData))
-    }, [])
-
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        if (posId) {
+            !location.state[0].pancard && alert("Please go back and select transaction again.");
+            axios.post(CrmforPosService.CrmforPosService.baseURL + `/api/pos/customer/pan-number`, { pan_number: location.state[0].pancard, pos_id: posId })
+            .then(res=>setCustomerData(TransactionCustomerFunction(res.data.data)))
+            .catch(error=>console.log(error))
+        }
+    }, [location.state, posId])
+   
     useEffect(async () => {
         try {
-            // const fetchEmployees = await axios.get(CrmforInsuranceService.CrmforInsuranceService.baseURL + '/api/transactions/telecallers');
-            // fetchEmployees.data.status === 200 ? setTelecallers(fetchEmployees.data.data) : alert('No telecallers found');
-
-            const fetchRmi = await axios.get(CrmforInsuranceService.CrmforInsuranceService.baseURL + '/api/general-transactions/relationship-managers');
-            fetchRmi.data.status === 200 ? setRmi(fetchRmi.data.data) : alert('No relationship managers found');
-
             let companiesArray = [];
-            const fetchCompanies = await axios.get(CrmforInsuranceService.CrmforInsuranceService.baseURL + '/api/general-transactions/companies');
-            console.log(fetchCompanies)
-            if (fetchCompanies.data.status === 200) {
+            const fetchCompanies = await axios.get(CrmforPosService.CrmforPosService.baseURL + '/api/general-transactions/companies');
+            if (fetchCompanies.status === 200) {
                 // eslint-disable-next-line array-callback-return
                 fetchCompanies.data.data.map((item, index) => {
                     companiesArray.push(item.company_name);
@@ -138,25 +126,22 @@ const GeneralInsuranceTransaction = () => {
         return obj;
     }
 
-
-
-
     let companyFunction = async (value) => {
-        const response = await axios.post(CrmforInsuranceService.CrmforInsuranceService.baseURL + '/api/general-transactions/products', { company_name: value });
+        const response = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/general-transactions/products', { company_name: value });
         if (response.status === 200) {
             setProduct(response.data.data)
         }
     }
 
     let productFunction = async (value, formikValues) => {
-        const response = await axios.post(CrmforInsuranceService.CrmforInsuranceService.baseURL + '/api/general-transactions/type-of-insurance', { company_name: formikValues.company_name, product_name: value });
+        console.log(value,formikValues)
+        const response = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/general-transactions/type-of-insurance', { company_name: formikValues.company_name, product_name: value });
         if (response.status === 200) {
             setInsuranceType(response.data.data)
         }
     }
 
     let typeOfInsurance = async (value, formikValues) => {
-
         switch (value.toLowerCase()) {
             case "travel":
                 setSubType(TravelMode());
@@ -167,21 +152,21 @@ const GeneralInsuranceTransaction = () => {
                 break;
         }
 
-        const response = await axios.post(CrmforInsuranceService.CrmforInsuranceService.baseURL + '/api/general-transactions/plan-type', { company_name: formikValues.company_name, product_name: formikValues.product_name, type_of_insurance: value });
+        const response = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/general-transactions/plan-type', { company_name: formikValues.company_name, product_name: formikValues.product_name, type_of_insurance: value });
         if (response.status === 200) {
             setPlanType(response.data.data)
         }
     }
 
     let planTypeHandler = async (value, formikValues) => {
-        const response = await axios.post(CrmforInsuranceService.CrmforInsuranceService.baseURL + '/api/general-transactions/plan-name', { company_name: formikValues.company_name, product_name: formikValues.product_name, type_of_insurance: formikValues.type_of_insurance, plan_type: value });
+        const response = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/general-transactions/plan-name', { company_name: formikValues.company_name, product_name: formikValues.product_name, type_of_insurance: formikValues.type_of_insurance, plan_type: value });
         if (response.status === 200) {
             setPlanName(response.data.data)
         }
     }
 
     let planNameHandler = async (value, formikValues) => {
-        const response = await axios.post(CrmforInsuranceService.CrmforInsuranceService.baseURL + '/api/general-transactions/revenue', { company_name: formikValues.company_name, product_name: formikValues.product_name, type_of_insurance: formikValues.type_of_insurance, plan_type: formikValues.plan_type, plan_name: value });
+        const response = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/general-transactions/revenue', { company_name: formikValues.company_name, product_name: formikValues.product_name, type_of_insurance: formikValues.type_of_insurance, plan_type: formikValues.plan_type, plan_name: value });
         if (response.status === 200) {
             console.log(response.data)
             setRevenueDetails(response.data.data)
@@ -193,10 +178,9 @@ const GeneralInsuranceTransaction = () => {
             alert('Please select company, product, type of insurance, plan name, plan type');
             return;
         }
-        const NET_AMOUNT = net(Number(e), 18);
-        const REVENUE = (Number(NET_AMOUNT) * (Number(revenueDetails[0].revenue) / 100));
-        setNetPremium(NET_AMOUNT);
-        setRevenue(Number(REVENUE.toFixed(0)));
+    
+        setNetPremium(((Number(e) / 1.18)).toFixed(0));
+        setRevenue(Number(((Number(e)/1.18) * Number(revenueDetails[0].revenue) / 100).toFixed(0)));
     }
 
     const uploadFile = (e) => {
@@ -205,12 +189,12 @@ const GeneralInsuranceTransaction = () => {
         if (e.target.files[0].type !== "application/pdf") {
             e.target.value = null
             alert("Please upload only pdf files");
-            return;
+            return false;
         }
-        if (selected >= 10000000) {
-            window.alert(`${name} File too big max 100KB`);
+        if (selected >= 2000000) {
+            window.alert(`${name} File too big max 200KB`);
             e.target.value = null
-            return;
+            return false;
         }
 
         let file = e.target.files[0];
@@ -231,17 +215,22 @@ const GeneralInsuranceTransaction = () => {
 
 
     const onSubmit = async (values) => {
-
+        // console.log(values);
+        const premium = {
+            net_premium  : netPremium,
+            revenue : revenue
+        }
         const extraInformation = {
             customer_mobile: customerData.mobile,
             customer_aadhar: customerData.aadhar_number,
             customer_pan: customerData.pan_number,
             customer_name: `${customerData.first_name} ${customerData.last_name}`,
-            submitted_employee_id: employeeId
+            submitted_pos_id: posId
         }
-        const transactionDetails = { ...values, ...files, ...extraInformation};
+        const transactionDetails = { ...values, ...files, ...extraInformation,...premium};
+        console.log(transactionDetails);
 
-        const { data: { transaction_id } } = await axios.post(CrmforInsuranceService.CrmforInsuranceService.baseURL + '/api/general-transactions/add-transaction', transactionDetails);
+        const transaction_id = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/general-transactions/add-transaction', transactionDetails);
         console.log(transaction_id)
         if (transaction_id && transactionDetails.policy_form && transactionDetails.policy_number && transactionDetails.application_form && transactionDetails.stage) {
             setSaveTransactionsDailog({ open: true, id: transaction_id, pending: false });
@@ -292,20 +281,18 @@ const GeneralInsuranceTransaction = () => {
                                     <div className="col-12 py-3">
                                         <h5 className="text-center">Please fill busineess entry details</h5>
                                     </div>
-                                    <OptionsSelect name="relationship_manager_id" label="Relationship Manager Id" required options={rmi} key1='employee_id' key2='firstname' key3='employee_id' />
-                                    <OptionsSelect name="employee_id" label="Employee Id" required options={rmi} key1='employee_id' key2='firstname' key3='employee_id' />
                                     <OptionsSelect name="company_name" label="Company Name" required handler={companyFunction} options={companies} />
                                     <OptionsSelect name="product_name" label="Product Name" required handler={(value) => productFunction(value, formikProps.values)} options={products} key1="product_name" key2="product_name" />
                                     <OptionsSelect name="type_of_insurance" label="Type of Insurance" required handler={(value) => typeOfInsurance(value, formikProps.values)} options={insuranceType} key1="type_of_insurance" key2="type_of_insurance" />
                                     <OptionsSelect name="sub_type" label="Sub Type" required options={subType} key1="mode" key2="mode" />
                                     <OptionsSelect name="plan_type" label="Plan Type" required handler={(e) => planTypeHandler(e, formikProps.values)} options={planType} key1="plan_type" key2="plan_type" />
                                     <OptionsSelect name="plan_name" label="Plan Name" required handler={(e) => planNameHandler(e, formikProps.values)} options={planName} key1="plan_name" key2="plan_name" />
-                                    <Select name="select_mode" label="Select Mode" required>
+                                    {/* <Select name="select_mode" label="Select Mode" required>
                                         <option value="">Select mode</option>
                                         <option value="Fresh">Fresh</option>
                                         <option value="Renewel">Renewel</option>
                                         <option value="Portability">Portability</option>
-                                    </Select>
+                                    </Select> */}
                                     <Input name="gross_premium" label="Gross Premium" required handler={(e) => grossFunction(e, formikProps.values)} />
                                     <Input name="net_premium" label="Net Premium" required value={netPremium} readOnly />
                                     <Input name="policy_type" label="Policy Type" required />
@@ -337,7 +324,7 @@ const GeneralInsuranceTransaction = () => {
                                     <Input name="revenue" label="Revenue" required value={revenue} readOnly />
                                 </div>
                                 <div className="d-flex justify-content-center align-items-center">
-                                    <button type="submit" className="btn btn-secondary" disabled={Object.keys(formikProps.errors).length === 0 ?  false : true} >Submit</button>
+                                    <button type="submit" className="btn btn-secondary" >Submit</button>
                                 </div>
                             </Form>
                         </div>

@@ -1,5 +1,6 @@
 
 export const net = (amount, perc) => {
+  console.log('amount',amount,'perc',perc)
   return Number(
     (Number(amount) - (Number(amount) * perc / 100)).toFixed(0)
   );
@@ -23,9 +24,10 @@ export const NewSearchHandler = (inputValue, data) => {
         (element) =>(
               element.first_name && element?.first_name.toString().toLowerCase().includes(inputValue.toLowerCase()) ||
               element.last_name && element?.last_name.toString().toLowerCase().includes(inputValue.toLowerCase()) ||
-              element.mobile && element?.mobile.toString().toLowerCase().includes(inputValue.toLowerCase()) ||
+              element.email && element?.email.toString().toLowerCase().includes(inputValue.toLowerCase()) ||
+              element.mobile && element?.mobile_number.toString().toLowerCase().includes(inputValue.toLowerCase()) ||
               element.aadhar_number && element?.aadhar_number.toString().toLowerCase().includes(inputValue.toLowerCase()) ||
-              element.pan_number && element?.pan_number.toString().toLowerCase().includes(inputValue.toLowerCase())
+              element.pancard && element?.pancard.toString().toLowerCase().includes(inputValue.toLowerCase())
             )
       )
   } else {

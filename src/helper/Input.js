@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import React, { useState, Fragment } from 'react';
 import { useFormik, Formik, Form, Field, ErrorMessage } from 'formik';
 import DatePicker from 'react-datepicker';
@@ -13,10 +14,11 @@ export const Input = (props) => {
         <div>
             <Field className="form-control" name={name}   >
                 {({ field, form, meta }) => {
+                    // console.log(value)
                     return (
                         <div>
                             {
-                                value ?
+                                value !== undefined ? 
                                     <input type="text" id={name} {...field} readOnly={readOnly} value={value && value} onChange={(e) => { form.handleChange(e); handler && handler(e.target.value) }} className="form-control" />
                                     :
                                     <input type="text" id={name} {...field} readOnly={readOnly} value={form.values[name] ? form.values[name] : ''}  onChange={(e) => { form.handleChange(e); handler && handler(e.target.value) }} className="form-control" />

@@ -39,13 +39,13 @@ const GeneralInsurance = (props) => {
     const [showPendingTransactions, setShowPendingTransactions] = useState(true);
     const [dailog, setDailog] = useState({ open: false, message: "" });
 
-    const employeeId = useContext(UserContext);
+    const posId = useContext(UserContext);
     const history = useHistory();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(async () => {
-        if (employeeId) {
-            axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/general-transactions/pending-transactions/${employeeId}`).then(response => {
+        if (posId) {
+            axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/general-transactions/pending-transactions/${posId}`).then(response => {
                 setPendingTransactionsFetched(response.data.customerArray);
                 setPendingTransactions(response.data.customerArray);
                 setPendingTransactionsTable(true);
@@ -53,10 +53,10 @@ const GeneralInsurance = (props) => {
             }).catch((error) => {
                 setTableLoading(false);
             })
-            // const fetchedEmployees = await axios.get(CrmforInsuranceService.CrmforInsuranceService.baseURL + `/api/general-transactions/dependent-transactions/${employeeId}`);
+            // const fetchedEmployees = await axios.get(CrmforInsuranceService.CrmforInsuranceService.baseURL + `/api/general-transactions/dependent-transactions/${posId}`);
             // console.log(fetchedEmployees)
         }
-    }, [employeeId, dailog.open])
+    }, [posId, dailog.open])
 
 
     const newSearchHandler = (event) => {
@@ -89,7 +89,7 @@ const GeneralInsurance = (props) => {
         let datesData = { start_date: startDate, end_date: endDate }
 
         setTableLoading(true)
-        axios.post(CrmforPosService.CrmforPosService.baseURL + `/api/general-transactions/transactions-between-dates/${employeeId}`, datesData).then(response => {
+        axios.post(CrmforPosService.CrmforPosService.baseURL + `/api/general-transactions/transactions-between-dates/${posId}`, datesData).then(response => {
             setNewTransactions(response.data.data)
             setShowPendingTransactions(false)
             setNewTransactionsFetched(response.data.data)

@@ -31,13 +31,15 @@ export function PosValidationSchema() {
     return (
         yup.object({
             posId: yup.string()
-                .required("Please Enter POS Id or Email Address").matches(/^[a-zA-z]{3}[0-9]{5}$/,'Please Enter Valid POS ID'),
+                .required("Please Enter POS Id or Email Address"),
             password: yup.string()
                 .min(5, 'Please Enter at least 5 characters').required('Please Enter Password')
                 .matches(/^[a-zA-Z0-9%*#@]+$/).trim()
         })
     )
 }
+
+
 
 export function CustomerValidation() {
     return (

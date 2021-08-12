@@ -101,15 +101,13 @@ export const GeneralInitialValueFunction = (data) => {
   let returnInitialValues;
 
     returnInitialValues= {
-    relationship_manager_id : "",
-    employee_id : '',
     company_name : '',
     product_name : '',
     type_of_insurance : '',
     sub_type : '',
     plan_type : '',
     plan_name : '',
-    select_mode : '',
+    // select_mode : '',
     gross_premium : '',
     net_premium : '',
     policy_number : '',
@@ -133,12 +131,9 @@ export const GeneralInitialValueFunction = (data) => {
 }
 export const LifeInitialValueFunction = (data) => {
 
-  // console.log(data)
   let returnInitialValues;
 
     returnInitialValues= {
-      relationship_manager_id : "",
-      employee_id : '',
       application_number : '',
       company_name : '',
       product_name : '',
@@ -170,24 +165,23 @@ export const LifeInitialValueFunction = (data) => {
 export const TransactionCustomerFunction = (customer = {}) => {
   let customerInitialValue;
 
-
   customerInitialValue = { 
     title : customer.title,
     first_name : customer.first_name,
     last_name : customer.last_name,
-    mobile : customer.mobile ,
+    mobile : customer.mobile_number,
     email : customer.email,
     gender : customer.gender,
     dob : new Date(customer.dob),
-    pan_number : customer.pan_number,
+    pan_number : customer.pancard,
     aadhar_number : customer.aadhar_number,
-    location : customer.location,
+    location : customer.locations,
     branch : customer.branch,
-    present_line1 : customer.present_line1,
-    present_line2 : customer.present_line2,
+    present_line1 : customer.present_address1,
+    present_line2 : customer.present_address2,
     present_city : customer.present_city,
     present_district : customer.present_district,
-    present_state : customer.present_state,
+    present_state : customer.present_states,
     present_country : customer.present_country,
     present_pincode : customer.present_pincode,
 }
@@ -198,8 +192,6 @@ return customerInitialValue;
 
 
 export const lifeInsuranceTransactionValues = {
-  relationship_manager_id : "",
-  employee_id : '',
   application_number : '',
   company_name : '',
   product_name : '',
@@ -226,9 +218,6 @@ export const lifeInsuranceTransactionValues = {
 }
 
 export   const generalInsuranceTransactionValues = {
-  relationship_manager_id : "",
-    employee_id : '',
-    agent_id : '',
     company_name : '',
     product_name : '',
     type_of_insurance : '',

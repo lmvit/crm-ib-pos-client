@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import React, { Fragment, useState, useEffect, useRef, useContext } from 'react';
 import { Formik, Form } from 'formik';
 import { useLocation, useHistory } from 'react-router-dom';
@@ -9,13 +10,10 @@ import { net } from '../helper/helper';
 import { customerInitialValue, LifeInitialValueFunction, TransactionCustomerFunction } from '../helper/initialValues';
 import axios from 'axios';
 import CrmforPosService from '../config/index';
-import {UserContext} from '../pos/posHome';
+import { UserContext } from '../pos/posHome';
 
 const LifeInsuranceTransaction = () => {
     const [customerData, setCustomerData] = useState({ ...customerInitialValue });
-    const [rmi, setRmi] = useState([]);
-    const [telecallers, setTelecallers] = useState([]);
-    const [companiesTest, setcompaniesTest] = useState('')
     const [mop, setMop] = useState('');
     const [companies, setCompanies] = useState([]);
     const [products, setProduct] = useState([]);
@@ -29,32 +27,25 @@ const LifeInsuranceTransaction = () => {
     const location = useLocation();
     const [files, setFiles] = useState({});
     const history = useHistory();
-    const [ loading, setLoading ] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [popup, setPopup] = useState({ open: false, message: "", color: "info" }); /////Color : warning, success, error, info
-    const [saveTransactionsDailog, setSaveTransactionsDailog] = useState({ open: false, message: "saveTransactions", id: null, pending : false});
+    const [saveTransactionsDailog, setSaveTransactionsDailog] = useState({ open: false, message: "saveTransactions", id: null, pending: false });
 
     const pdfRef1 = useRef(null);
     const pdfRef2 = useRef(null);
-    const employeeId = useContext(UserContext);
+    const posId = useContext(UserContext);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(async () => {
-        !location.state.pan_number && alert("Please go back and select transaction again.");
-        let response = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/customer/pan-number', { pan_number: location.state.pan_number });
-        let responseData = await response.data.data;
-        setCustomerData(TransactionCustomerFunction(responseData && responseData))
-    }, [])
+        if (posId) {
+            !location.state[0].pancard && alert("Please go back and select transaction again.");
+            axios.post(CrmforPosService.CrmforPosService.baseURL + `/api/pos/customer/pan-number`, { pan_number: location.state[0].pancard, pos_id: posId })
+            .then(res=>setCustomerData(TransactionCustomerFunction(res.data.data)))
+            .catch(error=>console.log(error))
+        }
+    }, [location.state, posId])
 
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(async () => {
         try {
-            // const fetchEmployees = await axios.get(CrmforPosService.CrmforPosService.baseURL+'/api/transactions/telecallers');
-            // fetchEmployees.data.status === 200 ? setTelecallers(fetchEmployees.data.data)  : alert('No telecallers found');
-
-            const fetchRmi = await axios.get(CrmforPosService.CrmforPosService.baseURL + '/api/life-transactions/relationship-managers');
-            fetchRmi.data.status === 200 ? setRmi(fetchRmi.data.data) : alert('No relationship managers found');
-
             let companiesArray = [];
             const fetchProduct = await axios.get(CrmforPosService.CrmforPosService.baseURL + '/api/life-transactions/companies');
             if (fetchProduct.data.status === 200) {
@@ -63,11 +54,9 @@ const LifeInsuranceTransaction = () => {
                 })
             }
             setCompanies([...new Set(companiesArray)]);
-
         } catch (e) {
             alert("Something went wrong. Please try again!!!")
         }
-
     }, [])
 
 
@@ -100,9 +89,6 @@ const LifeInsuranceTransaction = () => {
         }
     }
 
-
-
-
     let companyFunction = async (value) => {
         const response = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/life-transactions/products', { company_name: value });
         if (response.status === 200) {
@@ -124,11 +110,10 @@ const LifeInsuranceTransaction = () => {
         }
     }
 
-
     let planNameFunction = async (value, formikValues) => {
         const response = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/life-transactions/ppt-revenue', { company_name: formikValues.company_name, product_name: formikValues.product_name, plan_type: formikValues.plan_type, plan_name: value });
         if (response.status === 200) {
-            console.log(response.data.data)
+            // console.log(response.data.data)
             setPptRevenue(response.data.data)
         }
     }
@@ -140,22 +125,25 @@ const LifeInsuranceTransaction = () => {
         }
 
         // eslint-disable-next-line default-case
+        console.log(formikValues.plan_type)
         switch (formikValues.plan_type.toLocaleLowerCase()) {
             case "ULIP".toLocaleLowerCase(): // 18
-
                 setNetPremium(((Number(e) / 1.18)).toFixed(0));
-                // setRevenue((Number(e) / 1.18) * ppt / 100).toFixed(0);
-                setRevenue(Number((net(e, 18) * Number(ppt) / 100).toFixed(0)));
+                // console.log(pptRevenue[0].revenue);
+                // console.log('netPremium',(Number(e) / 1.18).toFixed(0));
+                // setRevenue(Number((net(e, 18) * Number(pptRevenue[0].revenue) / 100).toFixed(0)));
+                console.log('netPremium',netPremium)
+                setRevenue(Number(((Number(e)/1.18) * Number(pptRevenue[0].revenue) / 100).toFixed(0)));
                 break;
-
             case "Traditional Plan".toLocaleLowerCase(): // 4.5
-            case "Term Plan".toLocaleLowerCase(): // 4.5
-                setNetPremium((Number(e) - (Number(e) * 4.5 / 100)).toFixed(0));
-                setRevenue(Number((net(e, 4.5) * Number(ppt) / 100).toFixed(0)));
+            case "Term".toLocaleLowerCase(): // 4.5
+                setNetPremium((Number(e)/1.045).toFixed(0));
+                console.log('net Term',netPremium);
+                setRevenue(Number(((Number(e)/1.045) * Number(pptRevenue[0].revenue) / 100).toFixed(0)));
+                console.log('revenue',revenue);
                 break;
         }
     }
-
 
     const uploadFile = (e) => {
         const { name } = e.target;
@@ -165,8 +153,8 @@ const LifeInsuranceTransaction = () => {
             alert("Please upload only pdf files");
             return;
         }
-        if (selected >= 10000000) {
-            window.alert(`${name} File too big max 100KB`);
+        if (selected >= 200000) {
+            window.alert(`${name} File too big max 200KB`);
             e.target.value = null
             return;
         }
@@ -183,26 +171,34 @@ const LifeInsuranceTransaction = () => {
     }
 
     const dailogClose = () => {
-        setSaveTransactionsDailog({ open: false});
+        setSaveTransactionsDailog({ open: false });
         history.push({ pathname: '/home/life-insurance-transactions' });
     }
 
 
     const onSubmit = async (values, onSubmitProps) => {
-            const extraInformation = {
-                customer_mobile: customerData.mobile,
-                customer_aadhar: customerData.aadhar_number,
-                customer_pan: customerData.pan_number,
-                customer_name: `${customerData.first_name} ${customerData.last_name}`,
-                submitted_employee_id: employeeId
-            }
-            const transactionDetails = { ...values, ...files, ...extraInformation };
-            const { data: { transaction_id } } = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/life-transactions/add-transaction', transactionDetails );
-            if (transaction_id && transactionDetails.policy_form && transactionDetails.policy_number && transactionDetails.application_form && transactionDetails.stage) {
-                setSaveTransactionsDailog({ open: true, id: transaction_id, pending : false }); 
-            } else {
-                setSaveTransactionsDailog({ open: true, id: transaction_id, pending : true });
-            }
+        const extraInformation = {
+            customer_mobile: customerData.mobile,
+            customer_aadhar: customerData.aadhar_number,
+            customer_pan: customerData.pan_number,
+            customer_name: `${customerData.first_name} ${customerData.last_name}`,
+            submitted_pos_id: posId
+        }
+        const premium = {
+            net_premium : netPremium,
+            revenue : revenue
+        }
+        const transactionDetails = { ...values, ...files, ...premium, ...extraInformation };
+        // console.log(transactionDetails);
+        const { data: { transaction_id } } = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/life-transactions/add-transaction', transactionDetails);
+        if (transaction_id && transactionDetails.policy_form && transactionDetails.policy_number && transactionDetails.application_form && transactionDetails.stage) {
+            setSaveTransactionsDailog({ open: true, id: transaction_id, pending: false });
+        } else {
+            setSaveTransactionsDailog({ open: true, id: transaction_id, pending: true });
+            setTimeout(()=>{
+                history.push('/home/business-transaction/life-insurance-transaction')
+            },3000);
+        }
     }
 
 
@@ -242,7 +238,7 @@ const LifeInsuranceTransaction = () => {
             >
                 {
                     formikProps => {
-                        // console.log(formikProps)
+                        // console.log(formikProps.values)
                         return <div className='px-3'>
 
                             <Form>
@@ -250,8 +246,6 @@ const LifeInsuranceTransaction = () => {
                                     <div className="col-12 py-3">
                                         <h5 className="text-center">Please fill busineess entry details</h5>
                                     </div>
-                                    <OptionsSelect name="relationship_manager_id" label="Relationship Manager Id" required options={rmi} key1='employee_id' key2='firstname' key3='employee_id' />
-                                    <OptionsSelect name="employee_id" label="Employee Id" required options={rmi} key1='employee_id' key2='firstname' key3='employee_id' />
                                     <Input name="application_number" label="Application Number" required />
                                     <OptionsSelect name="company_name" label="Company Name" required handler={companyFunction} options={companies} />
                                     <OptionsSelect name="product_name" label="Product Name" required handler={(value) => productFunction(value, formikProps.values)} options={products} key1="product_name" key2="product_name" />
@@ -314,7 +308,7 @@ const LifeInsuranceTransaction = () => {
             </div>
             <PopUp popup={popup} />
             {saveTransactionsDailog ? <AlertDialog dailog={saveTransactionsDailog} close={dailogClose} /> : null}
-            
+
         </Fragment>
     )
 }

@@ -66,24 +66,22 @@ export const GeneralValidationFunction = (value, files) => {
     let returnValidation;
 
     let cashObject = {
-        relationship_manager_id : yup.string().required("Please select manager"),
-        employee_id : yup.string().required("Please select employee id"),
         company_name : yup.string().required("Please select company name"),
         product_name : yup.string().required("Please select product name"),
         type_of_insurance : yup.string().required("Please select type of insurance"),
         sub_type : yup.string().required("Please select sub type"),
         plan_type : yup.string().required("Please select plan type"),
         plan_name : yup.string().required("Please select plan name"),
-        select_mode : yup.string().required("Please select select mode"),
+        // select_mode : yup.string().required("Please select select mode"),
         gross_premium : yup.string().required("Please select gross permium"),
-        net_premium : yup.string().required("Please select net premium"),
+        net_premium : yup.string(),
         policy_type : yup.string().required("Please select policy type"),
         policy_tenure : yup.string().required("Please select policy tenure"),
         date_of_policy_login : yup.date().required("Please select date").nullable(),
         type_of_business : yup.string().required("Please select type of business"),
         mode_of_payment : yup.string().required("Please select mode of payment"),
         date_of_entry : yup.date().required("Please select date").nullable(),
-        revenue : yup.string().required("Please select revenue"),
+        revenue : yup.string(),
         policy_number : yup.string(),
         stage : yup.string(),
         account_number : yup.string(),
@@ -140,8 +138,6 @@ export const LifeValidationFunction = (value, files) => {
     let returnValidation;
 
     let cashObject = {
-        relationship_manager_id : yup.string().required("Please select relationship manager"),
-        employee_id : yup.string().required("Please select employee id"),
         application_number :  yup.string().required("Please select application number"),
         company_name : yup.string().required("Please select company name"),
         plan_type : yup.string().required("Please select plan type"),

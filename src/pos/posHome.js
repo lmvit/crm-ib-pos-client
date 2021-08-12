@@ -13,11 +13,9 @@ import EditCustomerDetails from '../provide-business/EditCustomerDetails';
 import Routing from '../protectedRoute/Routing';
 import axios from 'axios';
 import CrmforPosService from '../../src/config/index';
-// import LifeInsuranceTransaction from '../BusinessTransaction/life-insurance-transaction';
-// import GeneralInsuranceTransaction from '../BusinessTransaction/general-insurance-transaction';
-import GeneralInsuranceTransaction from '../Transcations/GeneralInsurance';
-// import GeneralInsuranceTransaction from './transcations/general-insurance-data1';
-import LifeInsuranceTransaction from '../Transcations/LifeInsurance';
+import GeneralInsuranceTransaction from '../Transcations/LifeInsuranceSearch';
+import GeneralInsuranceData from '../Transcations/GeneralInsuranceForm';
+import LifeInsuranceTransaction from '../Transcations/LifeInsuranceSearch';
 import LifeInsuranceData from '../Transcations/LifeInsuranceForm';
 
 export const UserContext = React.createContext();
@@ -152,11 +150,11 @@ const PosHome = (props) => {
                   <Routing path="/home/business-transaction/life-insurance-transaction" component={LifeInsuranceTransaction}/>
                   <Routing path="/home/business-transaction/general-insurance-transaction" component={GeneralInsuranceTransaction}/>
                   <Routing path="/home/life-insurance-transactions-data" component={LifeInsuranceData}/>
+                  <Routing path="/home/general-insurance-transactions-data" component={GeneralInsuranceData}/>
                 </Switch>
               </section>
             </div>
           </div>
-
         </animated.div>
       </Fragment>
     </UserContext.Provider>

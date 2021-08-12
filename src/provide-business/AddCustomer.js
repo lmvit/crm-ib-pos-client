@@ -95,7 +95,8 @@ function Addcustomer() {
     const onSubmit = async(values,onSubmitProps) => {
         const customerExists = {
             posId : user,
-            aadhar : values.aadhar_number
+            aadhar : values.aadhar_number,
+            pancard : values.pancard
         }
         axios.post(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/customer-details/exists`,customerExists)
         .then(res=>{
