@@ -1,4 +1,4 @@
-import React,{useRef,useContext,useState} from 'react'
+import React,{useRef,useContext} from 'react'
 import axios from 'axios';
 import CrmforPosService from '../config/index';
 import { UserContext } from '../pos/posHome';
@@ -9,12 +9,12 @@ function LifeInsuranceSearch() {
    const inputValue = useRef(null);
    const posId = useContext(UserContext);
    const urlActive = window.location.pathname.slice(27);
-   // console.log(urlActive)
    const onSubmitHandler = () =>{
       if(inputValue.current.value.length <= 0){
          window.alert('Please Enter Mobie Number or Aadhar Number or Pan Number');
          return false;
       }else{
+         const token = sessionStorage.getItem('token');
          const searchInput = inputValue.current.value;
          let path;
          if (urlActive === 'life-insurance-transaction') {
@@ -22,11 +22,11 @@ function LifeInsuranceSearch() {
          } else {
             path ='/home/general-insurance-transactions-data'
          }
-         axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/life-transactions/customer-details/${searchInput}/${posId}`)
+         axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/life-transactions/customer-details/${searchInput}/${posId}`,{headers:{Authorization:token}})
          .then(res=>{
             if(res.data.message === 'customer exists'){
                window.alert(res.data.message);
-               console.log(path)
+               // console.log(path)
                history.push({
                   pathname:`${path}`,
                   state: res.data.data
@@ -47,13 +47,13 @@ function LifeInsuranceSearch() {
    return (
       <>
          <div className="container">
-            {urlActive === 'life-insurance-transaction' ? <h5 className="text-center my-4">Life Insurance Transction</h5>:<h5 className="text-center my-4">General Insurance Transction</h5>}
+            {urlActive === 'life-insurance-transaction' ? <h4 className="text-center my-5">Life Insurance Transaction</h4>:<h4 className="text-center my-5">General Insurance Transaction</h4>}
             <div>
                <form>
-                  <input type="text" ref={inputValue} className="form-control col-12" placeholder="Search by Mobile Number or Aadhar Number or Pan Number"/>
-                  <div className="d-flex justify-content-center mt-3">
-                     <input type="button" className="btn btn-dark" value="submit" onClick={onSubmitHandler}/>
-                  </div>
+                 <div className="d-flex justify-content-center">
+                 <input type="text" ref={inputValue} className="form-control col-6" placeholder="Search by Mobile Number or Aadhar Number or Pan Number"/>
+                  <input type="button" className="btn btn-dark ml-2" value="submit" onClick={onSubmitHandler}/>
+                 </div>
                </form>
             </div>
          </div>

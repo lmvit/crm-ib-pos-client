@@ -27,9 +27,9 @@ function Poslogin() {
                 onSubmitProps.setSubmitting(false);
                 return window.alert('Invalid POS ID or Passsword')
             }else{
-                console.log(res.data);
+                // console.log(res.data);
                 sessionStorage.setItem('token',res.data.accessToken)
-                history.push('/home');
+                history.push('/home/reports-count');
                 onSubmitProps.resetForm();
                 onSubmitProps.setSubmitting(false);
                 return window.alert('Login Successfully');

@@ -40,9 +40,10 @@ const GeneralInsuranceTransaction = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(async () => {
+        const token = sessionStorage.getItem('token');
         if (posId) {
             !location.state[0].pancard && alert("Please go back and select transaction again.");
-            axios.post(CrmforPosService.CrmforPosService.baseURL + `/api/pos/customer/pan-number`, { pan_number: location.state[0].pancard, pos_id: posId })
+            axios.post(CrmforPosService.CrmforPosService.baseURL + `/api/pos/customer/pan-number`, { pan_number: location.state[0].pancard, pos_id: posId },{headers:{Authorization:token}})
             .then(res=>setCustomerData(TransactionCustomerFunction(res.data.data)))
             .catch(error=>console.log(error))
         }
@@ -134,7 +135,7 @@ const GeneralInsuranceTransaction = () => {
     }
 
     let productFunction = async (value, formikValues) => {
-        console.log(value,formikValues)
+        // console.log(value,formikValues)
         const response = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/general-transactions/type-of-insurance', { company_name: formikValues.company_name, product_name: value });
         if (response.status === 200) {
             setInsuranceType(response.data.data)
@@ -210,7 +211,7 @@ const GeneralInsuranceTransaction = () => {
 
     const dailogClose = () => {
         setSaveTransactionsDailog({ open: false });
-        history.push({ pathname: '/home/general-insurance-transactions' });
+        history.push({ pathname: '/home/business-transaction/general-insurance-transaction' });
     }
 
 
@@ -230,9 +231,9 @@ const GeneralInsuranceTransaction = () => {
         const transactionDetails = { ...values, ...files, ...extraInformation,...premium};
         console.log(transactionDetails);
 
-        const transaction_id = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/general-transactions/add-transaction', transactionDetails);
+        const { data: { transaction_id } } = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/general-transactions/add-transaction', transactionDetails);
         console.log(transaction_id)
-        if (transaction_id && transactionDetails.policy_form && transactionDetails.policy_number && transactionDetails.application_form && transactionDetails.stage) {
+        if (transaction_id && transactionDetails.policy_form && transactionDetails.policy_number  && transactionDetails.stage) {
             setSaveTransactionsDailog({ open: true, id: transaction_id, pending: false });
         } else {
             setSaveTransactionsDailog({ open: true, id: transaction_id, pending: true });
@@ -255,13 +256,13 @@ const GeneralInsuranceTransaction = () => {
                             <DefaultInput name="aadhar_number" label="Aadhar Card Number" />
                             <DefaultInput name="location" label="Location" />
                             <DefaultInput name="branch" label="Branch" />
-                            <DefaultInput name="present_line1" label="Present Line 1" />
-                            <DefaultInput name="present_line2" label="Present Line 2" />
-                            <DefaultInput name="present_city" label="Present City" />
-                            <DefaultInput name="present_district" label="Present City" />
-                            <DefaultInput name="present_state" label="Present State" />
-                            <DefaultInput name="present_country" label="Present Country" />
-                            <DefaultInput name="present_pincode" label="Present Pincode" />
+                            <DefaultInput name="present_line1" label="Line 1" />
+                            <DefaultInput name="present_line2" label="Line 2" />
+                            <DefaultInput name="present_city" label="City" />
+                            <DefaultInput name="present_district" label="City" />
+                            <DefaultInput name="present_state" label="State" />
+                            <DefaultInput name="present_country" label="Country" />
+                            <DefaultInput name="present_pincode" label="Pincode" />
                         </div>
                     </Form>
                 </div>
@@ -287,17 +288,18 @@ const GeneralInsuranceTransaction = () => {
                                     <OptionsSelect name="sub_type" label="Sub Type" required options={subType} key1="mode" key2="mode" />
                                     <OptionsSelect name="plan_type" label="Plan Type" required handler={(e) => planTypeHandler(e, formikProps.values)} options={planType} key1="plan_type" key2="plan_type" />
                                     <OptionsSelect name="plan_name" label="Plan Name" required handler={(e) => planNameHandler(e, formikProps.values)} options={planName} key1="plan_name" key2="plan_name" />
-                                    {/* <Select name="select_mode" label="Select Mode" required>
-                                        <option value="">Select mode</option>
-                                        <option value="Fresh">Fresh</option>
-                                        <option value="Renewel">Renewel</option>
-                                        <option value="Portability">Portability</option>
-                                    </Select> */}
                                     <Input name="gross_premium" label="Gross Premium" required handler={(e) => grossFunction(e, formikProps.values)} />
                                     <Input name="net_premium" label="Net Premium" required value={netPremium} readOnly />
                                     <Input name="policy_type" label="Policy Type" required />
                                     <Input name="policy_tenure" label="Policy Tenure" required />
                                     <DateField name="date_of_policy_login" label="Date of Policy Logins" required />
+                                    <Select name="premium_payment_mode" label="Premium Payment Mode" required>
+                                        <option value=""></option>
+                                        <option value="Monthly">Monthly</option>
+                                        <option value="Quaterly">Quaterly</option>
+                                        <option value="Half Yearly">Half Yearly</option>
+                                        <option value="Annually">Annually</option>
+                                    </Select>
                                     <Select name="type_of_business" label="Type of Business" required>
                                         <option value=""></option>
                                         <option value="New Business">New Business</option>

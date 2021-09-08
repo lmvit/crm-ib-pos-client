@@ -17,6 +17,11 @@ import GeneralInsuranceTransaction from '../Transcations/LifeInsuranceSearch';
 import GeneralInsuranceData from '../Transcations/GeneralInsuranceForm';
 import LifeInsuranceTransaction from '../Transcations/LifeInsuranceSearch';
 import LifeInsuranceData from '../Transcations/LifeInsuranceForm';
+import LifeInsurancePosReports from '../posReports/Life-insurance-pos-reports';
+import GeneralInsurancePosReports from '../posReports/Life-insurance-pos-reports';
+import Home from './Home';
+import LifeInsuranceRenewalReports from '../RenewalReports/LifeInsurance';
+import GeneralInsuranceRenewalReports from '../RenewalReports/GeneralInsurance';
 
 export const UserContext = React.createContext();
 const PosHome = (props) => {
@@ -34,7 +39,7 @@ const PosHome = (props) => {
     } else {
       const id = await parseJwt(posId);
       setRole(id.pos_id);
-      axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/login/loginId-username/loginId-username/${id.pos_id}`)
+      axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/login/loginId-username/loginId-username/${id.pos_id}`,{headers:{Authorization:posId}})
         .then(res => setUserName(res.data[0].first_name.toLocaleUpperCase()))
         .catch(err => console.log(err))
     }
@@ -114,6 +119,9 @@ const PosHome = (props) => {
               <div onClick={e => closeBar(e)} className={["Home_sidebar", sideBarToogle ? "pro-sidebar-open" : "pro-sidebar-close"].join(" ")}>
                 <ProSidebar className='Home_proSideBar'>
                   <Menu iconShape="square">
+                    <MenuItem>
+                      <Link to="/home/reports-count">Home</Link>
+                    </MenuItem>
                     <SubMenu title="Provide Business">
                       <MenuItem  >
                         <Link to='/home/add-customer'>Add New Customer</Link>
@@ -130,11 +138,20 @@ const PosHome = (props) => {
                         <Link to='/home/business-transaction/general-insurance-transaction'>General Insurance Transaction</Link>
                       </MenuItem>
                     </SubMenu>
-                    <SubMenu title="Life Insurance POS Report">
-            
+                    <SubMenu title="Renewal Reports">
+                      <MenuItem  >
+                        <Link to='/home/renewal-reports/life-insurance'>Life Insurance Reports</Link>
+                      </MenuItem>
+                      <MenuItem>
+                        <Link to='/home/renewal-reports/general-insurance'>General Insurance Reports</Link>
+                      </MenuItem>
                     </SubMenu>
-                    <SubMenu title="General Insurance POS Report">
-                    </SubMenu>
+                    <MenuItem>
+                      <Link to='/home/life-transactions-pos-reports'>Life Insurance POS Report</Link>
+                    </MenuItem>
+                    <MenuItem>
+                      <Link to='/home/general-transactions-pos-reports'>General Insurance POS Report</Link>
+                    </MenuItem>
                     <SubMenu title="Status of business">
 
                     </SubMenu>
@@ -144,6 +161,7 @@ const PosHome = (props) => {
 
               <section className="Home_content_section">
                 <Switch>
+                  <Routing path="/home/reports-count" component={Home}/>
                   <Routing path="/home/add-customer" logout={signOut} component={AddCustomer} />
                   <Routing path="/home/cutomer-details" component={CustomerDetails} />
                   <Routing path="/home/edit-customer-details" component={EditCustomerDetails} />
@@ -151,6 +169,10 @@ const PosHome = (props) => {
                   <Routing path="/home/business-transaction/general-insurance-transaction" component={GeneralInsuranceTransaction}/>
                   <Routing path="/home/life-insurance-transactions-data" component={LifeInsuranceData}/>
                   <Routing path="/home/general-insurance-transactions-data" component={GeneralInsuranceData}/>
+                  <Routing path="/home/life-transactions-pos-reports" component={LifeInsurancePosReports}/>
+                  <Routing path="/home/general-transactions-pos-reports" component={GeneralInsurancePosReports}/>
+                  <Routing path="/home/renewal-reports/life-insurance" component={LifeInsuranceRenewalReports}/>
+                  <Routing path="/home/renewal-reports/general-insurance" component={GeneralInsuranceRenewalReports}/>
                 </Switch>
               </section>
             </div>

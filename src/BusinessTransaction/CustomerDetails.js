@@ -8,7 +8,6 @@ function CustomerDetails(props) {
     useEffect(() => {
         setData(props.customersData)
         setSearchData(props.customersData)
-    //   console.log(data)
     }, [data, props.customersData]);
 
     const onSearchHandle = (e)=>{

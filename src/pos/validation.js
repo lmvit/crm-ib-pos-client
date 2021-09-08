@@ -23,6 +23,7 @@ export default function ValidationSchema() {
             aadhar_number: yup.string().required('Please Enter Aadhaar Number').matches(/^[2-9]{1}[0-9]{3}[0-9]{4}[0-9]{4}$/, 'Please Enter 12 Digit Aadhaar Number'),
             ifsc_code: yup.string().required('Please Enter IFSC Code').matches(/^[A-Za-z]{4}[a-zA-Z0-9]{7}$/, 'Please Enter 11 digits alpha numeric code'),
             bank_name: yup.string().matches(/^[a-zA-Z\s]+$/, 'Please Enter Only Letters').required('Please Enter Bank Name'),
+            person_type : yup.string().required('Please Select Person Type')
         })
     )
 }

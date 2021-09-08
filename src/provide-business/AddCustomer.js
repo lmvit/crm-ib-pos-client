@@ -29,7 +29,7 @@ function Addcustomer() {
         const aboutController = new AbortController()
         const token = sessionStorage.getItem('token');
         setId(await parseJwt(token))
-         axios.get(CrmforPosService.CrmforPosService.baseURL + '/api/pos/customer/get-location')
+         axios.get(CrmforPosService.CrmforPosService.baseURL + '/api/pos/customer/get-location',{headers:{Authorization:token}})
         .then(res => setLocation(res.data))
         .catch(err=>console.log(err))
         return ()=>{
@@ -37,16 +37,21 @@ function Addcustomer() {
         }
     }, [])
     useEffect(()=>{
+        const token = sessionStorage.getItem('token');
         const aboutController = new AbortController()
-         axios.get(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/get-customers/${user}`)
-        .then(res=>{
-            if(res.data){
-                setCustData(res.data)
+        if(user){
+            axios.get(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/get-customers/${user}`,{headers:{Authorization:token}})
+            .then(res=>{
+                if(res.data){
+                    setCustData(res.data)
+                }
+            })
+            .catch(err=>console.log(err))
+            return ()=>{
+                aboutController.abort();
             }
-        })
-        .catch(err=>console.log(err))
-        return ()=>{
-            aboutController.abort();
+        }else{
+            return false;
         }
     },[])
     const initialValues = {
@@ -86,28 +91,31 @@ function Addcustomer() {
     const customerIdentity = CustomerIdentity();
 
     const selectBranchHandler=async(e,formik)=>{
+        const token = sessionStorage.getItem('token');
         formik.handleChange(e);
-        await axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/customer/get-branches/${e.target.value}`)
+        await axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/customer/get-branches/${e.target.value}`,{headers:{Authorization : token}})
                .then(res => setBranches(res.data))
                .catch(err => console.log(err))
     }
 
     const onSubmit = async(values,onSubmitProps) => {
+        const token = sessionStorage.getItem('token');
         const customerExists = {
             posId : user,
             aadhar : values.aadhar_number,
             pancard : values.pancard
         }
-        axios.post(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/customer-details/exists`,customerExists)
+        axios.post(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/customer-details/exists`,customerExists,{headers:{Authorization : token}})
         .then(res=>{
-            if(res.data === 'not found'){
+            console.log(res.data);
+            if(res.data === 'No duplicates found'){
                 const uploadFiles =  checkValidFiles();
                 if(uploadFiles){
                     const pos_id ={
                         pos_id : id.pos_id
                     }
                     const customerDetails = {...values,...files,...pos_id};
-                    axios.post(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/customer-details`,customerDetails)
+                    axios.post(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/customer-details`,customerDetails,{headers:{Authorization:token}})
                     .then(res=>{
                         if(res.data.status === 200){
                             alert('Customer Details Added Successfully');
@@ -126,7 +134,7 @@ function Addcustomer() {
                     .catch(err=>console.log(err))
                 }
             }else{
-                window.alert('Customer Details already registered');
+                window.alert(res.data.message);
                 return false;
             }
         })

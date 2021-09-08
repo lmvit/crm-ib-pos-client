@@ -1,7 +1,7 @@
 /*eslint-disable*/
 import React from 'react';
 import { Form, Formik} from 'formik';
-import { DefaultInput } from '../pos/input';
+import { DefaultInput,Select } from '../pos/input';
 import ValidationSchema from '../pos/validation';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
@@ -19,22 +19,9 @@ function PosRegisterDetails() {
         bank_name: '',
         ifsc_code: '',
         branch_name: '',
-        account_number: ''
+        account_number: '',
+        person_type : ''
     }
-
-    // const initialValues = {
-    //     first_name: 'SAI',
-    //     last_name: 'KUMAR',
-    //     mobile_number: 7702577123,
-    //     email: 'SAIKUMAR.SOLASA@GMAIL.COM',
-    //     aadhar_number: 266665093575,
-    //     pancard: 'AAAAA1234A',
-    //     bank_name: 'SBI',
-    //     ifsc_code: 'SBIN0000000',
-    //     branch_name: 'HYDERABAD',
-    //     account_number: '055410018000142'
-    // }
-
     const validateRows = ['Mobile Number Already exists','Email Already exists','Aadhar Number Already exists','Pancard Number Already exists','Account Number Already exists'];
 
     const onSubmit = async (values) => {
@@ -87,6 +74,8 @@ function PosRegisterDetails() {
         { type: "text", name: "branch_name", label: "Branch Name" }
     ];
 
+    const options = ['Individual','non-individual']
+
     const formContainer = {
         height: 'auto',
         backgroundColor: '#fff',
@@ -113,6 +102,10 @@ function PosRegisterDetails() {
                                                     className={formik.touched[obj.name] && formik.errors[obj.name] ? "is-invalid form-control" : "form-control text-uppercase"} />
                                             )
                                         })}
+                                    </div>
+                                    <div className="justify-content-center col-12 m-auto">
+                                        <Select options={options} label="Person Type" required name="person_type"
+                                         className={formik.touched.person_type && formik.errors.person_type ? "is-invalid form-control" : "form-control text-uppercase"}/>  
                                     </div>
 
                                     <div className="container p-2 mt-3">

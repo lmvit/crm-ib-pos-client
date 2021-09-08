@@ -28,7 +28,7 @@ export const Select = (props)=>{
           <option value="">Select</option>
           {options.map((element,index)=>{
             return (
-              <option key={index} className="text-capitalize" value={element}>{element}</option>
+              <option key={index} className="text-capitalize" value={element.toLocaleLowerCase()}>{element}</option>
             )
           })}
         </Field>

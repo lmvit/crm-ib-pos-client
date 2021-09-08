@@ -13,7 +13,8 @@ function CustomerDetails() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(async () => {
         if (user) {
-            await axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/customer/get-customers/${user}`)
+            const token = sessionStorage.getItem('token');
+            await axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/customer/get-customers/${user}`,{headers:{Authorization:token}})
                 .then(res => {
                     if (res.data) {
                         setData(res.data);
@@ -29,7 +30,8 @@ function CustomerDetails() {
     }, [user])
    
     const getCustomerIdHandler = async (id, user) => {
-        await axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/customer/get-customer-details/${user}/${id}`)
+        const token = sessionStorage.getItem('token');
+        await axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/customer/get-customer-details/${user}/${id}`,{headers:{Authorization:token}})
             .then(res => {
                 if (res.data) {
                     redirectEditPage.push({
@@ -71,6 +73,7 @@ function CustomerDetails() {
                             <th>Name</th>
                             <th>Mobile&nbsp;Number</th>
                             <th>Aadhar&nbsp;Number</th>
+                            <th>Pan&nbsp;Number</th>
                             <th>Edit</th>
                         </tr>
                     </thead>
@@ -83,12 +86,13 @@ function CustomerDetails() {
                                     <td className="text-capitalize">{`${element.first_name} ${element.last_name}`}</td>
                                     <td>{element.mobile_number}</td>
                                     <td>{element.aadhar_number}</td>
+                                    <td className="text-uppercase">{element.pancard}</td>
                                     <td className="text-center">
                                         <FaEdit onClick={() => getCustomerIdHandler(element.customer_id, user)} title="Edit" size="1.3em" style={{ color: "black" }} />
                                     </td>
                                 </tr>
                             )
-                        }):searchData.length > 0 ?<span>Loading...</span>:<span>No Data Found</span>}
+                        }):searchData.length >= 0 ?<span>Loading...</span>:<span>No Data Found</span>}
                     </tbody>
                 </table>
             </div>

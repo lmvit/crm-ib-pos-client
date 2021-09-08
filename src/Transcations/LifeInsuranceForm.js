@@ -6,7 +6,6 @@ import { Input, Select, DateField, DefaultInput, OptionsSelect } from '../helper
 import { LifeValidationFunction } from '../helper/validations';
 import PopUp from './components/PopUp';
 import AlertDialog from './components/Dailog';
-import { net } from '../helper/helper';
 import { customerInitialValue, LifeInitialValueFunction, TransactionCustomerFunction } from '../helper/initialValues';
 import axios from 'axios';
 import CrmforPosService from '../config/index';
@@ -36,9 +35,10 @@ const LifeInsuranceTransaction = () => {
     const posId = useContext(UserContext);
 
     useEffect(async () => {
+        const token = sessionStorage.getItem('token');
         if (posId) {
             !location.state[0].pancard && alert("Please go back and select transaction again.");
-            axios.post(CrmforPosService.CrmforPosService.baseURL + `/api/pos/customer/pan-number`, { pan_number: location.state[0].pancard, pos_id: posId })
+            axios.post(CrmforPosService.CrmforPosService.baseURL + `/api/pos/customer/pan-number`, { pan_number: location.state[0].pancard, pos_id: posId },{headers:{Authorization:token}})
             .then(res=>setCustomerData(TransactionCustomerFunction(res.data.data)))
             .catch(error=>console.log(error))
         }
@@ -125,23 +125,17 @@ const LifeInsuranceTransaction = () => {
         }
 
         // eslint-disable-next-line default-case
-        console.log(formikValues.plan_type)
+        // console.log(formikValues.plan_type)
         switch (formikValues.plan_type.toLocaleLowerCase()) {
-            case "ULIP".toLocaleLowerCase(): // 18
-                setNetPremium(((Number(e) / 1.18)).toFixed(0));
-                // console.log(pptRevenue[0].revenue);
-                // console.log('netPremium',(Number(e) / 1.18).toFixed(0));
-                // setRevenue(Number((net(e, 18) * Number(pptRevenue[0].revenue) / 100).toFixed(0)));
-                console.log('netPremium',netPremium)
-                setRevenue(Number(((Number(e)/1.18) * Number(pptRevenue[0].revenue) / 100).toFixed(0)));
-                break;
-            case "Traditional Plan".toLocaleLowerCase(): // 4.5
-            case "Term".toLocaleLowerCase(): // 4.5
-                setNetPremium((Number(e)/1.045).toFixed(0));
-                console.log('net Term',netPremium);
-                setRevenue(Number(((Number(e)/1.045) * Number(pptRevenue[0].revenue) / 100).toFixed(0)));
-                console.log('revenue',revenue);
-                break;
+                case "ULIP".toLocaleLowerCase(): // 18
+                case "Term Plan".toLocaleLowerCase(): // 18
+                    setNetPremium(((Number(e) / 1.18)).toFixed(0));
+                    setRevenue(Number(((Number(e)/1.18) * Number(pptRevenue[0].revenue) / 100).toFixed(0)));
+                    break;
+                case "Traditional Plan".toLocaleLowerCase(): // 4.5
+                    setNetPremium((Number(e)/1.045).toFixed(0));
+                    setRevenue(Number(((Number(e)/1.045) * Number(pptRevenue[0].revenue) / 100).toFixed(0)));
+                    break;
         }
     }
 
@@ -172,7 +166,7 @@ const LifeInsuranceTransaction = () => {
 
     const dailogClose = () => {
         setSaveTransactionsDailog({ open: false });
-        history.push({ pathname: '/home/life-insurance-transactions' });
+        history.push({ pathname: '/home/business-transaction/life-insurance-transaction' });
     }
 
 
@@ -195,9 +189,6 @@ const LifeInsuranceTransaction = () => {
             setSaveTransactionsDailog({ open: true, id: transaction_id, pending: false });
         } else {
             setSaveTransactionsDailog({ open: true, id: transaction_id, pending: true });
-            setTimeout(()=>{
-                history.push('/home/business-transaction/life-insurance-transaction')
-            },3000);
         }
     }
 
@@ -219,13 +210,13 @@ const LifeInsuranceTransaction = () => {
                             <DefaultInput name="aadhar_number" label="Aadhar Card Number" />
                             <DefaultInput name="location" label="Location" />
                             <DefaultInput name="branch" label="Branch" />
-                            <DefaultInput name="present_line1" label="Present Line 1" />
-                            <DefaultInput name="present_line2" label="Present Line 2" />
-                            <DefaultInput name="present_city" label="Present City" />
-                            <DefaultInput name="present_district" label="Present District" />
-                            <DefaultInput name="present_state" label="Present State" />
-                            <DefaultInput name="present_country" label="Present Country" />
-                            <DefaultInput name="present_pincode" label="Present Pincode" />
+                            <DefaultInput name="present_line1" label="Line 1" />
+                            <DefaultInput name="present_line2" label="Line 2" />
+                            <DefaultInput name="present_city" label="City" />
+                            <DefaultInput name="present_district" label="District" />
+                            <DefaultInput name="present_state" label="State" />
+                            <DefaultInput name="present_country" label="Country" />
+                            <DefaultInput name="present_pincode" label="Pincode" />
                         </div>
                     </Form>
                 </div>

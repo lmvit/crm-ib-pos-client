@@ -78,6 +78,7 @@ export const GeneralValidationFunction = (value, files) => {
         policy_type : yup.string().required("Please select policy type"),
         policy_tenure : yup.string().required("Please select policy tenure"),
         date_of_policy_login : yup.date().required("Please select date").nullable(),
+        premium_payment_mode : yup.string().required("Please select permium payment mode"),
         type_of_business : yup.string().required("Please select type of business"),
         mode_of_payment : yup.string().required("Please select mode of payment"),
         date_of_entry : yup.date().required("Please select date").nullable(),

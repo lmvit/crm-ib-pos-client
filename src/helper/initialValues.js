@@ -114,6 +114,7 @@ export const GeneralInitialValueFunction = (data) => {
     policy_type : '',
     policy_tenure : '',
     date_of_policy_login : null,
+    premium_payment_mode:'',
     type_of_business : '',
     mode_of_payment : '',
     stage : '',

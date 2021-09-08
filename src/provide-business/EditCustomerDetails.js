@@ -67,20 +67,21 @@ function EditCustomerDetails() {
     }, [uploadAadhar,uploadPan,uploadPassbook,uploadPhoto])
 
     const onSubmit = (values) => {
+        const token  = sessionStorage.getItem('token');
         const customerExists = {
             posId : user,
             aadhar : values.aadhar_number,
             pancard : values.pancard,
             customerId : values.custId
         }
-        axios.post(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/update-customer-details/exists`,customerExists)
+        axios.post(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/update-customer-details/exists`,customerExists,{headers:{Authorization:token}})
         .then(res=>{
             if(res.data === 'not found'){
-                axios.put(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/update-customer-details/${initialValues.custId}/${user}`,values)
+                axios.put(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/update-customer-details/${initialValues.custId}/${user}`,values,{headers:{Authorization:token}})
                 .then(res=>{
                     if(res.data === 'updated successfully'){
                         window.alert('customer details updated successfully');
-                        redirectHomePage.push('/home')
+                        redirectHomePage.push('/home/reports-count')
                     }
                 });
             }else{
@@ -103,8 +104,9 @@ function EditCustomerDetails() {
     const customerIdentity = CustomerIdentity();
 
     const selectBranchHandler = async (e, formik) => {
+        const token = sessionStorage.getItem('token');
         formik.handleChange(e);
-        await axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/customer/get-branches/${e.target.value}`)
+        await axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/customer/get-branches/${e.target.value}`,{headers:{Authorization:token}})
             .then(res => setBranches(res.data))
             .catch(err => console.log(err))
     }
@@ -115,8 +117,9 @@ function EditCustomerDetails() {
     
 
     useEffect(async () => {
+        const token = sessionStorage.getItem('token');
         if (initialValues.branch !== '') {
-            await axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/customer/get-branches/${initialValues.locations}`)
+            await axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/customer/get-branches/${initialValues.locations}`,{headers:{Authorization:token}})
                 .then(res => {
                     // console.log(res.data)
                     setBranches(res.data);
@@ -170,12 +173,13 @@ function EditCustomerDetails() {
         }
     }
     const uploadAadharFile=async(e)=>{
+        const token = sessionStorage.getItem('token');
         const result = await uploadFile(e);
        const aadhar ={
            aadhar : result
        }
         setUploadAadhar(value=>!value);
-        axios.put(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/update-aadhar/${initialValues.custId}/${user}`,aadhar)
+        axios.put(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/update-aadhar/${initialValues.custId}/${user}`,aadhar,{headers:{Authorization:token}})
         .then(res=>{
             if(res.data === 'successfull'){
                 // window.alert('updated Successfully');
@@ -186,12 +190,13 @@ function EditCustomerDetails() {
     }
   
     const uploadPanFile=async(e)=>{
+        const token = sessionStorage.getItem('token');
         const result =await uploadFile(e);
         const pan ={
             pan : result
         }
         setUploadPan(value=>!value);
-        axios.put(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/update-pan/${initialValues.custId}/${user}`,pan)
+        axios.put(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/update-pan/${initialValues.custId}/${user}`,pan,{headers:{Authorization:token}})
         .then(res=>{
             if(res.data === 'successfull'){
                 return true;
@@ -201,12 +206,13 @@ function EditCustomerDetails() {
         })
     }
     const uploadPhotoFile=async(e)=>{
+        const token = sessionStorage.getItem('token');
         const result =await uploadFile(e);
         const photo ={
             photo : result
         }
         setUploadPhoto(value=>!value);
-        axios.put(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/update-photo/${initialValues.custId}/${user}`,photo)
+        axios.put(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/update-photo/${initialValues.custId}/${user}`,photo,{headers:{Authorization:token}})
         .then(res=>{
             if(res.data === 'successfull'){
                 return true;
@@ -216,12 +222,13 @@ function EditCustomerDetails() {
         })
     }
     const uploadPassbookFile=async(e)=>{
+        const token = sessionStorage.getItem('token');
         const result =await uploadFile(e);
         const passbook ={
             passbook : result
         }
         setUploadPassbook(value=>!value);
-        axios.put(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/update-passbook/${initialValues.custId}/${user}`,passbook)
+        axios.put(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/update-passbook/${initialValues.custId}/${user}`,passbook,{headers:{Authorization:token}})
         .then(res=>{
             if(res.data === 'successfull'){
                 return true;

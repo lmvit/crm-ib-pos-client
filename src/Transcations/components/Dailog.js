@@ -5,10 +5,11 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { useHistory } from 'react-router';
 
 export default function AlertDialog({ dailog: { message, open, id, pending }, close }) {
     const [dailogOpen, setDailogOpen] = useState(false);
-
+    const history = useHistory();
     const dailogMessage = (id, pending) => {
         const pendingString = `Transaction is saved with transaction id: ${id} but poilcy number or stage or files are not given. Please inserted them later to complete transaction. Until then the transaction will be saved in pending transactions `
         const completeString = `Transaction is completed with transaction id: ${id}`
@@ -30,6 +31,7 @@ export default function AlertDialog({ dailog: { message, open, id, pending }, cl
 
     const handleClose = () => {
         setDailogOpen(false);
+        history.push('/home/business-transaction/life-insurance-transaction')
     };
 
     return (
