@@ -15,7 +15,7 @@ export default function ValidationSchema() {
             account_number: yup.string().required('Please Enter Bank Account Number').matches(/^\d{9,18}$/, 'Please Enter at least 8 Numbers'),
             branch_name: yup.string()
                 .required('Please Enter Account Branch Name')
-                .matches(/^[a-zA-z]+$/, "Please Enter Only Letters")
+                .matches(/^[a-zA-z\s]+$/, "Please Enter Only Letters")
                 .min(3, 'Please Enter At least 3 Characters'),
             mobile_number: yup.string().required('Please Enter Mobile Number')
                 .matches(/^[6-9]\d{9}$/, 'Please Enter a valid Mobile Number'),

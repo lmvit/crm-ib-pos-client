@@ -13,7 +13,7 @@ import EditCustomerDetails from '../provide-business/EditCustomerDetails';
 import Routing from '../protectedRoute/Routing';
 import axios from 'axios';
 import CrmforPosService from '../../src/config/index';
-import GeneralInsuranceTransaction from '../Transcations/LifeInsuranceSearch';
+import GeneralInsuranceTransaction from '../Transcations/generalInsuranceSearch';
 import GeneralInsuranceData from '../Transcations/GeneralInsuranceForm';
 import LifeInsuranceTransaction from '../Transcations/LifeInsuranceSearch';
 import LifeInsuranceData from '../Transcations/LifeInsuranceForm';
@@ -22,6 +22,8 @@ import GeneralInsurancePosReports from '../posReports/Life-insurance-pos-reports
 import Home from './Home';
 import LifeInsuranceRenewalReports from '../RenewalReports/LifeInsurance';
 import GeneralInsuranceRenewalReports from '../RenewalReports/GeneralInsurance';
+import PayoutDateSeach from '../payouts/PayoutDateSeach';
+import GeneralPayoutDataSeach from '../payouts/GeneralPayoutDataSearch';
 
 export const UserContext = React.createContext();
 const PosHome = (props) => {
@@ -37,13 +39,13 @@ const PosHome = (props) => {
       history.push('/');
       return window.alert('Enter your login credentials')
     } else {
-      const id = await parseJwt(posId);
-      setRole(id.pos_id);
-      axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/login/loginId-username/loginId-username/${id.pos_id}`,{headers:{Authorization:posId}})
-        .then(res => setUserName(res.data[0].first_name.toLocaleUpperCase()))
+      await axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/login/loginId-username`,{headers:{Authorization:posId}})
+        .then(res => setUserName(`${res.data[0].first_name} ${res.data[0].last_name}`))
+      await axios.get(CrmforPosService.CrmforPosService.baseURL+'/api/pos/login/get-pos-role',{headers:{Authorization:posId}})
+        .then(res=>setRole(res.data[0].pos_id))
         .catch(err => console.log(err))
     }
-  }, [history, role]);
+  }, [history, role,userName]);
 
   function logout() {
     if (window.confirm("Are you sure you want to Logout ?")) {
@@ -68,8 +70,6 @@ const PosHome = (props) => {
   var toggleSideBar = () => {
     setSideBarToogle(!sideBarToogle)
   }
-
-
 
   let closeBar = (e) => {
     if (e.target.tagName === 'A') {
@@ -146,14 +146,19 @@ const PosHome = (props) => {
                         <Link to='/home/renewal-reports/general-insurance'>General Insurance Reports</Link>
                       </MenuItem>
                     </SubMenu>
-                    <MenuItem>
-                      <Link to='/home/life-transactions-pos-reports'>Life Insurance POS Report</Link>
-                    </MenuItem>
-                    <MenuItem>
-                      <Link to='/home/general-transactions-pos-reports'>General Insurance POS Report</Link>
-                    </MenuItem>
+                      <MenuItem>
+                        <Link to='/home/life-transactions-pos-reports'>Life Insurance POS Report</Link>
+                      </MenuItem>
+                      <MenuItem>
+                        <Link to='/home/general-transactions-pos-reports'>General Insurance POS Report</Link>
+                      </MenuItem>
                     <SubMenu title="Status of business">
-
+                      <MenuItem>
+                        <Link to='/home/life-insurance-payouts'>Life Insurance</Link>
+                      </MenuItem>
+                      <MenuItem>
+                        <Link to='/home/general-insurance-payouts'>General Insurance</Link>
+                      </MenuItem>
                     </SubMenu>
                   </Menu>
                 </ProSidebar>
@@ -173,6 +178,8 @@ const PosHome = (props) => {
                   <Routing path="/home/general-transactions-pos-reports" component={GeneralInsurancePosReports}/>
                   <Routing path="/home/renewal-reports/life-insurance" component={LifeInsuranceRenewalReports}/>
                   <Routing path="/home/renewal-reports/general-insurance" component={GeneralInsuranceRenewalReports}/>
+                  <Routing path="/home/life-insurance-payouts" component={PayoutDateSeach}/>
+                  <Routing path="/home/general-insurance-payouts" component={GeneralPayoutDataSeach}/>
                 </Switch>
               </section>
             </div>

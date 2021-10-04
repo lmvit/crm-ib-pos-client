@@ -30,7 +30,8 @@ function PosTerms() {
         to = toDate.getFullYear();
     }
     const onSubmitHandler=()=>{
-        axios.post(CrmforPosService.CrmforPosService.baseURL + `/api/pos/login/register/details`, data)
+        const token = sessionStorage.getItem('token');
+        axios.post(CrmforPosService.CrmforPosService.baseURL + `/api/pos/login/register/details`, data,{headers:{Authorization:token}})
             .then(res => {
                 if(res.data === 'successfully inserted'){
                     window.alert('Successfully Added');

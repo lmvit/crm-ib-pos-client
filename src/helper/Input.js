@@ -19,9 +19,9 @@ export const Input = (props) => {
                         <div>
                             {
                                 value !== undefined ? 
-                                    <input type="text" id={name} {...field} readOnly={readOnly} value={value && value} onChange={(e) => { form.handleChange(e); handler && handler(e.target.value) }} className="form-control" />
+                                    <input type="text" placeholder={label} id={name} {...field} readOnly={readOnly} value={value && value} onChange={(e) => { form.handleChange(e); handler && handler(e.target.value) }} className="form-control" />
                                     :
-                                    <input type="text" id={name} {...field} readOnly={readOnly} value={form.values[name] ? form.values[name] : ''}  onChange={(e) => { form.handleChange(e); handler && handler(e.target.value) }} className="form-control" />
+                                    <input type="text" placeholder={label} id={name} {...field} readOnly={readOnly} value={form.values[name] ? form.values[name] : ''}  onChange={(e) => { form.handleChange(e); handler && handler(e.target.value) }} className="form-control" />
                             }
 
                         </div>
@@ -215,6 +215,8 @@ export const GiveInput = (props) => {
         </div>
     </div>
 }
+
+
 
 // export const DateField2 = (props) => {
 //     const { name, label, required, disabled } = props;

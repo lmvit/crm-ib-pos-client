@@ -12,7 +12,7 @@ export default function AlertDialog({ dailog: { message, open, id, pending }, cl
     const history = useHistory();
     const dailogMessage = (id, pending) => {
         const pendingString = `Transaction is saved with transaction id: ${id} but poilcy number or stage or files are not given. Please inserted them later to complete transaction. Until then the transaction will be saved in pending transactions `
-        const completeString = `Transaction is completed with transaction id: ${id}`
+        const completeString = `Transaction details are saved successfully and sent to the operation team with transaction-id: ${id}`
         let returnString;
 
         if(pending){

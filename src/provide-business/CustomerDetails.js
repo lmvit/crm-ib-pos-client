@@ -34,6 +34,7 @@ function CustomerDetails() {
         await axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/customer/get-customer-details/${user}/${id}`,{headers:{Authorization:token}})
             .then(res => {
                 if (res.data) {
+                    console.log(res.data);
                     redirectEditPage.push({
                         pathname: '/home/edit-customer-details',
                         state: res.data
@@ -46,23 +47,33 @@ function CustomerDetails() {
     }
 
     const onSearchHandle = async(e)=>{
-        let result =  [];
-        if(e.target.value){
-            result = data.filter(customer => customer.customer_id.toLowerCase().includes(e.target.value.toLowerCase()));
-        }else{
-            result = data;
+        let result = [];
+        console.log('target',e.target.value.length)
+        if(e.target.value && data){
+            result = data.filter(
+                (customer) => 
+            customer.customer_id && customer?.customer_id.toString().toLowerCase().includes(e.target.value.toLowerCase()) ||
+            customer.mobile_number && customer?.mobile_number.toString().toLowerCase().includes(e.target.value.toLowerCase()))
+        }
+        // console.log('res',result);
+        if(result.length === 0){
+            result=['none'];
+        }
+        if(e.target.value.length === 0){
+            result=data;
         }
         setSearchData(result);
     }
+    console.log('search',searchData);
 
     return (
         <div className="container-fluid m-auto">
-            <div className="d-flex justify-content-center my-3"><h5 className="text-dark">Customer Details</h5></div>
+            <div className="d-flex justify-content-center my-3"><h4 className="text-dark">Customer Details</h4></div>
             <div className="d-flex flex-row justify-content-end">
                 <div className="input-group-prepend">
                     <span className="input-group-text"><FaSearch/></span>
                 </div>
-                <input type="text" className="form-control text-capitalize col-8 col-md-6 col-lg-4 col-xl-3" autoComplete='none' placeholder="Search..." onChange={(e)=>onSearchHandle(e)}/>
+                <input type="text" className="form-control text-capitalize col-8 col-md-6 col-lg-4 col-xl-3" autoComplete='none' placeholder="Search by customer ID or mobile number" onChange={(e)=>onSearchHandle(e)}/>
             </div>
             <div className="table-responsive mt-3">
                 <table className="table table-hover table-striped col-12 p-0" style={{ borderCollapse: 'initial' }}>
@@ -77,8 +88,8 @@ function CustomerDetails() {
                             <th>Edit</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {searchData && searchData.length>0 ? searchData.map((element, index) => {
+                        {searchData.length > 0 && searchData[0] !== 'none' ? <tbody>
+                        {searchData.map((element, index) => {
                             return (
                                 <tr key={index}>
                                     <td>{index + 1}</td>
@@ -92,8 +103,9 @@ function CustomerDetails() {
                                     </td>
                                 </tr>
                             )
-                        }):searchData.length >= 0 ?<span>Loading...</span>:<span>No Data Found</span>}
-                    </tbody>
+                        })}
+                        </tbody>:
+                        searchData[0] === 'none' ? <tbody><tr><td colSpan="7">No data found</td></tr></tbody> : <tbody><tr><td colSpan="7" className="text-center">Loading...</td></tr></tbody>}
                 </table>
             </div>
         </div>

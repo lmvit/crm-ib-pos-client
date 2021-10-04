@@ -2,7 +2,6 @@ import React from 'react';
 import {BsArrowRight} from  'react-icons/bs'
 
 function ReportsTable(props) {
-   // console.log(props.data)
    return (
       <>
           <div className="container-fluid p-0">

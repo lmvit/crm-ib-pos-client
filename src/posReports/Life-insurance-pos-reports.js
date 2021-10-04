@@ -14,7 +14,8 @@ function LifeInsurancePosReports() {
       to_date : ''
    }
    const onSubmitLifeReports = (values)=>{
-      axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/reports/get-life-insurance-pos-reports/${values.from_date}/${values.to_date}`)
+      const token = sessionStorage.getItem('token');
+      axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/reports/get-life-insurance-pos-reports/${values.from_date}/${values.to_date}`,{headers:{Authorization:token}})
       .then(res=>{
          // console.log(res.data)
          if(res.data.responseData){
@@ -29,7 +30,8 @@ function LifeInsurancePosReports() {
       .catch(err=>console.log(err))
    }
    const onSubmitGeneralReports = (values)=>{
-      axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/reports/get-general-insurance-pos-reports/${values.from_date}/${values.to_date}`)
+      const token = sessionStorage.getItem('token');
+      axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/reports/get-general-insurance-pos-reports/${values.from_date}/${values.to_date}`,{headers:{Authorization:token}})
       .then(res=>{
          // console.log(res.data)
          if(res.data.responseData){

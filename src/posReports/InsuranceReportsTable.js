@@ -28,7 +28,8 @@ function InsuranceReportsTable() {
          html: '#reports-table',
          theme: 'grid',
          useCss : true,
-         margin : {left : 4, top:100,right:4},
+         startY : 100,
+         margin : {left : 4,right:4},
       });
       
       doc.save(urlActive==='pos-life-reports' ? 'Life Insurance Reports.pdf' : 'General Insurance Reports.pdf')
@@ -71,7 +72,7 @@ function InsuranceReportsTable() {
                   {data.map((obj,index)=>{
                      return(
                         <tr key={index}>
-                           {urlActive==='pos-life-reports'?<td className="p-1">{`POSL${obj.txn_id}`}</td>:<td className="p-1">{`POSG${obj.txn_id}`}</td>}
+                           {urlActive==='pos-life-reports'?<td className="p-1">{`POSL${obj.id}`}</td>:<td className="p-1">{`POSG${obj.id}`}</td>}
                            <td className="p-1">{new Date(obj.date_of_entry).toLocaleDateString('en-GB')}</td>
                            <td className="text-uppercase p-1">{obj.submitted_pos_id.toLocaleUpperCase()}</td>
                            <td className="p-1 text-uppercase">{obj.customer_id}</td>
@@ -96,14 +97,13 @@ function InsuranceReportsTable() {
          <div className="d-flex justify-content-center">
             <button onClick={downloadPdf}  className="btn btn-primary mr-2">Download as PDF<HiOutlineDocumentDownload size="1.2em"/></button>
             <ReactHTMLTableToExcel
-                    id="reports-table"
-                    className="btn btn-success"
-                    table="reports-table"
-                    filename="reportsxls"
-                    sheet="reports"
-                    buttonText='Download as Excel'
+               id="reports-table"
+               className="btn btn-success"
+               table="reports-table"
+               filename="reportsxls"
+               sheet="reports"
+               buttonText='Download as Excel'
             />
-                   
          </div>
          
       </>

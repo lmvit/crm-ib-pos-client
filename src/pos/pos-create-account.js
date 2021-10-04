@@ -25,6 +25,7 @@ function PosRegisterDetails() {
     const validateRows = ['Mobile Number Already exists','Email Already exists','Aadhar Number Already exists','Pancard Number Already exists','Account Number Already exists'];
 
     const onSubmit = async (values) => {
+        const token = sessionStorage.getItem('token');
         const obj = {
             first_name : values.first_name.toLowerCase(),
             last_name : values.last_name.toLowerCase(),
@@ -35,9 +36,10 @@ function PosRegisterDetails() {
             bank_name: values.bank_name.toLowerCase(),
             ifsc_code: values.ifsc_code.toLowerCase(),
             branch_name: values.branch_name.toLowerCase(),
-            account_number: values.account_number
+            account_number: values.account_number,
+            person_type : values.person_type
         }
-        axios.post(CrmforPosService.CrmforPosService.baseURL+`/api/pos/login/validate-details`,obj)
+        axios.post(CrmforPosService.CrmforPosService.baseURL+`/api/pos/login/validate-details`,obj,{headers:{Authorization:token}})
         .then(res=>{
             if(res.data === validateRows[0]){
                 return window.alert(validateRows[0]);
@@ -98,7 +100,7 @@ function PosRegisterDetails() {
                                     <div className="justify-content-center col-12 m-auto">
                                         {posForm.map((obj, index) => {
                                             return (
-                                                <DefaultInput name={obj.name} type={obj.type} label={obj.label} required
+                                                <DefaultInput key={index} name={obj.name} type={obj.type} label={obj.label} required
                                                     className={formik.touched[obj.name] && formik.errors[obj.name] ? "is-invalid form-control" : "form-control text-uppercase"} />
                                             )
                                         })}

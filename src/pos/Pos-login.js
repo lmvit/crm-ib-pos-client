@@ -20,6 +20,7 @@ function Poslogin() {
     }
 
     const onSubmit = async (value,onSubmitProps) => {
+        // const token = sessionStorage.getItem('token');
         axios.post(CrmforPosService.CrmforPosService.baseURL+'/api/pos/login/pos-login',value)
         .then(res=>{
             if(res.data.message === 'failed'){

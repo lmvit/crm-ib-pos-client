@@ -107,7 +107,6 @@ function Addcustomer() {
         }
         axios.post(CrmforPosService.CrmforPosService.baseURL+`/api/pos/customer/customer-details/exists`,customerExists,{headers:{Authorization : token}})
         .then(res=>{
-            console.log(res.data);
             if(res.data === 'No duplicates found'){
                 const uploadFiles =  checkValidFiles();
                 if(uploadFiles){

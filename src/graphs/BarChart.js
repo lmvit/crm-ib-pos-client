@@ -17,7 +17,6 @@ function BarChart(props) {
          backgroundColor: props.bg,
          borderWidth: 1,
          barPercentage: 0.5,
-
       }],
    }
    const options= {

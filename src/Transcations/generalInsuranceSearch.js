@@ -11,29 +11,30 @@ function LifeInsuranceSearch() {
    const inputValue = useRef(null);
    const posId = useContext(UserContext);
    const urlActive = window.location.pathname.slice(27);
+   console.log('url',urlActive);
    useEffect(() => {
       const searchInput = inputValue.current.value;
-      // let path;
-      // if (urlActive === 'life-insurance-transaction') {
-      //    path = '/home/life-insurance-transactions-data'
-      // } else {
-      //    path = '/home/general-insurance-transactions-data'
-      // }
-      callbacks(searchInput);
+      let path;
+      if (urlActive === 'life-insurance-transaction') {
+         path = '/home/life-insurance-transactions-data'
+      } else {
+         path = '/home/general-insurance-transactions-data'
+      }
+      callbacks(path, searchInput);
    }, [customerData])
-   function callbacks(searchInput) {
+   function callbacks(path, searchInput) {
       const token = sessionStorage.getItem('token');
       if (customerData.length > 0) {
-         axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/life-transactions/check-transaction-count/${searchInput}`, { headers: { Authorization: token } })
+         axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/general-transactions/check-transaction-count/${searchInput}`, { headers: { Authorization: token } })
             .then(res => {
                console.log('res',res);
                if (res.data.data[0].count === '0') {
                   history.push({
-                     pathname: `/home/life-insurance-transactions-data`,
+                     pathname: `/home/general-insurance-transactions-data`,
                      state: customerData
                   })
                } else {
-                  axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/life-transactions/check-transaction-dues/${searchInput}`, { headers: { Authorization: token } })
+                  axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/general-transactions/check-transaction-dues/${searchInput}`, { headers: { Authorization: token } })
                      .then(res => {
                         if (res) {
                            const date = new Date(res.data.renewalDate);
@@ -45,13 +46,14 @@ function LifeInsuranceSearch() {
                               const result = window.confirm('Click ok to submit your renewal transaction details');
                               if(result){
                                  history.push({
-                                    pathname: `/home/life-insurance-transactions-data`,
+                                    pathname: `/home/general-insurance-transactions-data`,
                                     state: customerData
                                  })
                               }
                            }
                         }
-                     }).catch(err => console.log(err))
+                     })
+                     .catch(err => console.log(err))
                }
             }).catch(err => console.log(err))
       }
@@ -85,7 +87,7 @@ function LifeInsuranceSearch() {
    return (
       <>
          <div className="container">
-            {urlActive === 'life-insurance-transaction' ? <h4 className="text-center my-5">Life Insurance Transaction</h4> : <h4 className="text-center my-5">General Insurance Transaction</h4>}
+            <h4 className="text-center my-5">General Insurance Transaction</h4>
             <div>
                <form>
                   <div className="d-flex justify-content-center">

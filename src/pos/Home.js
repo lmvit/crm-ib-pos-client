@@ -10,39 +10,51 @@ function Home() {
    const [generalTxnCount, setGeneralTxnCount] = useState(0);
    const [lifeRevenueData,setLifeRevenueData] = useState([]);
    const [generalRevenueData,setGeneralRevenueData] = useState([]);
+   const [lifeComissionData,setLifeCommissionData] = useState([]);
+   const [generalCommissionData,setGeneralCommissionData] = useState([]);
    let chartLifeInput =  new Array(12).fill(0);
    let chartGeneralInput =  new Array(12).fill(0);
 
-   useEffect(() => {
+   useEffect(async() => {
       const token = sessionStorage.getItem('token');
-      axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/reports/life-reports-count/${user}`,{headers:{Authorization:token}})
+      await axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/reports/life-reports-count`,{headers:{Authorization:token}})
          .then(res => {
-            // console.log(res.data)
             if (res.data.responseData) {
                setLifeTxnCount(res.data.responseData[0].count)
             }
          }).catch(err => console.log(err))
-      axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/reports/general-reports-count/${user}`,{headers:{Authorization:token}})
+      await axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/pos/reports/general-reports-count`,{headers:{Authorization:token}})
          .then(res => {
             if (res.data.responseData) {
                setGeneralTxnCount(res.data.responseData[0].count)
             }
          }).catch(err => console.log(err))
-      axios.get(CrmforPosService.CrmforPosService.baseURL+`/api/pos/reports/monthly-life-revenue-data`,{headers:{Authorization:token}})
+      await axios.get(CrmforPosService.CrmforPosService.baseURL+`/api/pos/reports/monthly-life-revenue-data`,{headers:{Authorization:token}})
       .then(res=>{
          if(res.data.responseData){
             setLifeRevenueData(res.data.responseData);
          }
       }).catch(err=>console.log(err))
-      axios.get(CrmforPosService.CrmforPosService.baseURL+`/api/pos/reports/monthly-general-revenue-data`,{headers:{Authorization:token}})
+      await axios.get(CrmforPosService.CrmforPosService.baseURL+`/api/pos/reports/monthly-general-revenue-data`,{headers:{Authorization:token}})
       .then(res=>{
          if(res.data.responseData){
             setGeneralRevenueData(res.data.responseData);
          }
       }).then(err=>console.log(err))
-   }, [user])
-   // console.log(lifeRevenueData);
-   // console.log(lifeTxnCount,generalTxnCount)
+      // axios.get(CrmforPosService.CrmforPosService.baseURL+`/api/pos/reports/monthly-life-commission-data`,{headers:{Authorization:token}})
+      // .then(res=>{
+      //    if(res.data.responseData){
+      //       setLifeCommissionData(res.data.responseData);
+      //    }
+      // }).then(err=>console.log(err))
+      // axios.get(CrmforPosService.CrmforPosService.baseURL+`/api/pos/reports/monthly-general-commission-data`,{headers:{Authorization:token}})
+      // .then(res=>{
+      //    if(res.data.responseData){
+      //       setGeneralCommissionData(res.data.responseData);
+      //    }
+      // }).then(err=>console.log(err))
+   }, [])
+  
    useEffect(() => {
      lifeRevenueData.map((arr,index)=>{
         return(
@@ -78,6 +90,10 @@ function Home() {
             <h4 className="my-1 text-center">Life Insurance Revenue</h4>
             <div className="mt-5"><BarChart lifeData = {chartGeneralInput} title = "General Insurance Revenue in Lakhs" bg="#044896"/></div>
             <h4 className="my-1 text-center">General Insurance Revenue</h4>
+            <div className="mt-5"><BarChart lifeData = {chartGeneralInput} title = "commission earned in Lakhs" bg="#1c78e2"/></div>
+            <h4 className="my-1 text-center">Life Insurance Payouts</h4>
+            <div className="mt-5"><BarChart lifeData = {chartGeneralInput} title = "commission earned in Lakhs" bg="#044896"/></div>
+            <h4 className="my-1 text-center">General Insurance Payouts</h4>
          </div>
       </div>
    )

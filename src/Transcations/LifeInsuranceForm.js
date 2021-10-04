@@ -10,6 +10,7 @@ import { customerInitialValue, LifeInitialValueFunction, TransactionCustomerFunc
 import axios from 'axios';
 import CrmforPosService from '../config/index';
 import { UserContext } from '../pos/posHome';
+import {fetchLifePptRevenue} from '../helper/api';
 
 const LifeInsuranceTransaction = () => {
     const [customerData, setCustomerData] = useState({ ...customerInitialValue });
@@ -46,8 +47,9 @@ const LifeInsuranceTransaction = () => {
 
     useEffect(async () => {
         try {
+            const token = sessionStorage.getItem('token');
             let companiesArray = [];
-            const fetchProduct = await axios.get(CrmforPosService.CrmforPosService.baseURL + '/api/life-transactions/companies');
+            const fetchProduct = await axios.get(CrmforPosService.CrmforPosService.baseURL + '/api/life-transactions/companies',{headers:{Authorization:token}});
             if (fetchProduct.data.status === 200) {
                 fetchProduct.data.data.map((item, index) => {
                     companiesArray.push(item.company_name);
@@ -118,6 +120,10 @@ const LifeInsuranceTransaction = () => {
         }
     }
 
+    let premiumPaymentTermFunction = async(value,formikValues)=>{
+        fetchLifePptRevenue(value,formikValues).then(response=>{setPpt(response[0].revenue)})
+    }
+
     const grossFunction = (e, formikValues) => {
         if (!formikValues.company_name || !formikValues.product_name || !formikValues.plan_name || !formikValues.premium_payment_term || !formikValues.plan_type) {
             alert('Please select company, product, plan name, premium payment term, plan type');
@@ -125,17 +131,16 @@ const LifeInsuranceTransaction = () => {
         }
 
         // eslint-disable-next-line default-case
-        // console.log(formikValues.plan_type)
         switch (formikValues.plan_type.toLocaleLowerCase()) {
-                case "ULIP".toLocaleLowerCase(): // 18
-                case "Term Plan".toLocaleLowerCase(): // 18
-                    setNetPremium(((Number(e) / 1.18)).toFixed(0));
-                    setRevenue(Number(((Number(e)/1.18) * Number(pptRevenue[0].revenue) / 100).toFixed(0)));
-                    break;
-                case "Traditional Plan".toLocaleLowerCase(): // 4.5
-                    setNetPremium((Number(e)/1.045).toFixed(0));
-                    setRevenue(Number(((Number(e)/1.045) * Number(pptRevenue[0].revenue) / 100).toFixed(0)));
-                    break;
+            case "ULIP".toLocaleLowerCase(): // 18
+            case "Term Plan".toLocaleLowerCase(): // 18
+                setNetPremium(((Number(e) / 1.18)).toFixed(0));
+                setRevenue(Number(((Number(e)/1.18) * Number(ppt) / 100).toFixed(0)));
+                break;
+            case "Traditional Plan".toLocaleLowerCase(): // 4.5
+                setNetPremium((Number(e)/1.045).toFixed(0));
+                setRevenue(Number(((Number(e)/1.045) * Number(ppt) / 100).toFixed(0)));
+                break;
         }
     }
 
@@ -171,6 +176,7 @@ const LifeInsuranceTransaction = () => {
 
 
     const onSubmit = async (values, onSubmitProps) => {
+        const token = sessionStorage.getItem('token');
         const extraInformation = {
             customer_mobile: customerData.mobile,
             customer_aadhar: customerData.aadhar_number,
@@ -183,8 +189,8 @@ const LifeInsuranceTransaction = () => {
             revenue : revenue
         }
         const transactionDetails = { ...values, ...files, ...premium, ...extraInformation };
-        // console.log(transactionDetails);
-        const { data: { transaction_id } } = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/life-transactions/add-transaction', transactionDetails);
+        
+        const { data: { transaction_id } } = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/life-transactions/add-transaction', transactionDetails,{headers:{Authorization:token}});
         if (transaction_id && transactionDetails.policy_form && transactionDetails.policy_number && transactionDetails.application_form && transactionDetails.stage) {
             setSaveTransactionsDailog({ open: true, id: transaction_id, pending: false });
         } else {
@@ -242,25 +248,25 @@ const LifeInsuranceTransaction = () => {
                                     <OptionsSelect name="product_name" label="Product Name" required handler={(value) => productFunction(value, formikProps.values)} options={products} key1="product_name" key2="product_name" />
                                     <OptionsSelect name="plan_type" label="Plan Type" required handler={(value) => planTypeFunction(value, formikProps.values)} options={planType} key1="plan_type" key2="plan_type" />
                                     <OptionsSelect name="plan_name" label="Plan Name" required handler={(value) => planNameFunction(value, formikProps.values)} options={planName} key1="plan_name" key2="plan_name" />
-                                    <OptionsSelect name="premium_payment_term" label="Premium Payment Term" required handler={setPpt} options={pptRevenue} key1="premium_payment_term" key2='premium_payment_term' />
+                                    <OptionsSelect name="premium_payment_term" label="Premium Payment Term" required handler={(value)=>premiumPaymentTermFunction(value,formikProps.values)} options={pptRevenue} key1="premium_payment_term" key2='premium_payment_term' />
                                     <Input name="policy_term" label="Policy Term" required />
                                     <Input name="gross_premium" label="Gross Premium" required handler={(value) => grossFunction(value, formikProps.values)} />
                                     <Input name="net_premium" label="Net Premium" required value={netPremium} readOnly />
                                     <DateField name="date_of_entry" label="Date of Entry" required />
                                     <Select name="premium_payment_mode" label="Premium Payment Mode" required>
-                                        <option value=""></option>
+                                        <option value="">Select</option>
                                         <option value="Monthly">Monthly</option>
                                         <option value="Quaterly">Quaterly</option>
                                         <option value="Half Yearly">Half Yearly</option>
                                         <option value="Annually">Annually</option>
                                     </Select>
                                     <Select name="type_of_business" label="Type of Business" required>
-                                        <option value=""></option>
+                                        <option value="">Select</option>
                                         <option value="New Business">New Business</option>
                                         <option value="Renewel">Renewel</option>
                                     </Select>
                                     <Select name="mode_of_payment" label="Mode of Payment" required handler={setMop} >
-                                        <option ></option>
+                                        <option value="">select</option>
                                         <option value="Cheque">Cheque</option>
                                         <option value="DD">DD</option>
                                         <option value="Online">Online</option>
@@ -271,7 +277,7 @@ const LifeInsuranceTransaction = () => {
                                         formikProps.values.mode_of_payment && mopHandler(formikProps.values.mode_of_payment)
                                     }
                                     <Select name="stage" label="Stage" required={filesInput}>
-                                        <option value=""></option>
+                                        <option value="">Select</option>
                                         <option value="Login">Login</option>
                                         <option value="Issued">Issued</option>
                                         <option value="Cancelled">Cancelled</option>
@@ -299,13 +305,7 @@ const LifeInsuranceTransaction = () => {
             </div>
             <PopUp popup={popup} />
             {saveTransactionsDailog ? <AlertDialog dailog={saveTransactionsDailog} close={dailogClose} /> : null}
-
         </Fragment>
     )
 }
-
-
 export default LifeInsuranceTransaction;
-
-// setPopup({ open: true, message: 'Files are not added but the transaction is saved with id : 90001', color: "error" });/
-// setSaveTransactionsDailog({open: true, id: 9000})

@@ -11,10 +11,12 @@ function LifeInsurance() {
    // console.log(user)
    const [data,setData] = useState([]);
    const currentDate = new Date().toLocaleDateString('en-CA');
-   const name = 'pos_general_insurance_transactions'
+   const name = 'pos_general_insurance_transactions';
+   const name1 = 'pos_general_transactions';
    useEffect(() => {
+      const token = sessionStorage.getItem('token');
     if(user){
-      axios.get(CrmforPosService.CrmforPosService.baseURL+`/api/pos/renewal/get-records/${name}/${user}`)
+      axios.get(CrmforPosService.CrmforPosService.baseURL+`/api/pos/renewal/get-records/${name}/${name1}/${user}`,{headers:{Authorization : token}})
       .then(res=>setData(res.data))
     }else{
        return false;

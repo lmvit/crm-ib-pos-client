@@ -51,8 +51,9 @@ const GeneralInsuranceTransaction = () => {
    
     useEffect(async () => {
         try {
+            const token = sessionStorage.getItem('token');
             let companiesArray = [];
-            const fetchCompanies = await axios.get(CrmforPosService.CrmforPosService.baseURL + '/api/general-transactions/companies');
+            const fetchCompanies = await axios.get(CrmforPosService.CrmforPosService.baseURL + '/api/general-transactions/companies',{headers:{Authorization : token}});
             if (fetchCompanies.status === 200) {
                 // eslint-disable-next-line array-callback-return
                 fetchCompanies.data.data.map((item, index) => {
@@ -128,21 +129,23 @@ const GeneralInsuranceTransaction = () => {
     }
 
     let companyFunction = async (value) => {
-        const response = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/general-transactions/products', { company_name: value });
+        const token = sessionStorage.getItem('token');
+        const response = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/general-transactions/products', { company_name: value },{headers:{Authorization:token}});
         if (response.status === 200) {
             setProduct(response.data.data)
         }
     }
 
     let productFunction = async (value, formikValues) => {
-        // console.log(value,formikValues)
-        const response = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/general-transactions/type-of-insurance', { company_name: formikValues.company_name, product_name: value });
+        const token = sessionStorage.getItem('token');
+        const response = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/general-transactions/type-of-insurance', { company_name: formikValues.company_name, product_name: value },{headers:{Authorization:token}});
         if (response.status === 200) {
             setInsuranceType(response.data.data)
         }
     }
 
     let typeOfInsurance = async (value, formikValues) => {
+        const token = sessionStorage.getItem('token');
         switch (value.toLowerCase()) {
             case "travel":
                 setSubType(TravelMode());
@@ -153,23 +156,24 @@ const GeneralInsuranceTransaction = () => {
                 break;
         }
 
-        const response = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/general-transactions/plan-type', { company_name: formikValues.company_name, product_name: formikValues.product_name, type_of_insurance: value });
+        const response = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/general-transactions/plan-type', { company_name: formikValues.company_name, product_name: formikValues.product_name, type_of_insurance: value },{headers:{Authorization:token}});
         if (response.status === 200) {
             setPlanType(response.data.data)
         }
     }
 
     let planTypeHandler = async (value, formikValues) => {
-        const response = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/general-transactions/plan-name', { company_name: formikValues.company_name, product_name: formikValues.product_name, type_of_insurance: formikValues.type_of_insurance, plan_type: value });
+        const token = sessionStorage.getItem('token');
+        const response = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/general-transactions/plan-name', { company_name: formikValues.company_name, product_name: formikValues.product_name, type_of_insurance: formikValues.type_of_insurance, plan_type: value },{headers:{Authorization:token}});
         if (response.status === 200) {
             setPlanName(response.data.data)
         }
     }
 
     let planNameHandler = async (value, formikValues) => {
-        const response = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/general-transactions/revenue', { company_name: formikValues.company_name, product_name: formikValues.product_name, type_of_insurance: formikValues.type_of_insurance, plan_type: formikValues.plan_type, plan_name: value });
+        const token = sessionStorage.getItem('token');
+        const response = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/general-transactions/revenue', { company_name: formikValues.company_name, product_name: formikValues.product_name, type_of_insurance: formikValues.type_of_insurance, plan_type: formikValues.plan_type, plan_name: value },{headers:{Authorization:token}});
         if (response.status === 200) {
-            console.log(response.data)
             setRevenueDetails(response.data.data)
         }
     }
@@ -216,7 +220,7 @@ const GeneralInsuranceTransaction = () => {
 
 
     const onSubmit = async (values) => {
-        // console.log(values);
+        const token = sessionStorage.getItem('token');
         const premium = {
             net_premium  : netPremium,
             revenue : revenue
@@ -231,7 +235,7 @@ const GeneralInsuranceTransaction = () => {
         const transactionDetails = { ...values, ...files, ...extraInformation,...premium};
         console.log(transactionDetails);
 
-        const { data: { transaction_id } } = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/general-transactions/add-transaction', transactionDetails);
+        const { data: { transaction_id } } = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/general-transactions/add-transaction', transactionDetails,{headers:{Authorization:token}});
         console.log(transaction_id)
         if (transaction_id && transactionDetails.policy_form && transactionDetails.policy_number  && transactionDetails.stage) {
             setSaveTransactionsDailog({ open: true, id: transaction_id, pending: false });
@@ -294,19 +298,19 @@ const GeneralInsuranceTransaction = () => {
                                     <Input name="policy_tenure" label="Policy Tenure" required />
                                     <DateField name="date_of_policy_login" label="Date of Policy Logins" required />
                                     <Select name="premium_payment_mode" label="Premium Payment Mode" required>
-                                        <option value=""></option>
+                                        <option value="">Select</option>
                                         <option value="Monthly">Monthly</option>
                                         <option value="Quaterly">Quaterly</option>
                                         <option value="Half Yearly">Half Yearly</option>
                                         <option value="Annually">Annually</option>
                                     </Select>
                                     <Select name="type_of_business" label="Type of Business" required>
-                                        <option value=""></option>
+                                        <option value="">Select</option>
                                         <option value="New Business">New Business</option>
                                         <option value="Renewel">Renewel</option>
                                     </Select>
                                     <Select name="mode_of_payment" label="Mode of Payment" required handler={setMop}  >
-                                        <option ></option>
+                                        <option >Select</option>
                                         <option value="Cheque">Cheque</option>
                                         <option value="DD">DD</option>
                                         <option value="Online">Online</option>
@@ -317,7 +321,7 @@ const GeneralInsuranceTransaction = () => {
                                     }
                                     <Input name="policy_number" label="Policy Number" />
                                     <Select name="stage" label="Stage" >
-                                        <option value=""></option>
+                                        <option value="">Select</option>
                                         <option value="Login">Login</option>
                                         <option value="Issued">Issued</option>
                                         <option value="Cancelled">Cancelled</option>

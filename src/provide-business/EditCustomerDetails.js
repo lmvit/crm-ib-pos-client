@@ -28,7 +28,8 @@ function EditCustomerDetails() {
     const checkRef = useRef();
 
     useEffect(async () => {
-        await axios.get(CrmforPosService.CrmforPosService.baseURL + '/api/get-location')
+        const token = sessionStorage.getItem('token');
+        await axios.get(CrmforPosService.CrmforPosService.baseURL + '/api/pos/customer/get-location',{headers:{Authorization:token}})
             .then(res => setLocation(res.data))
             .catch(err => console.log(err))
     }, [history])
@@ -44,13 +45,13 @@ function EditCustomerDetails() {
         dob: FormatDate(history.state[0].dob),
         pancard: history.state[0].pancard,
         gender: history.state[0].gender,
-        locations: history.state[0].locations,
+        locations: history.state[0].location,
         branch: history.state[0].branch,
         aadhar_number: history.state[0].aadhar_number,
-        present_address1: history.state[0].present_address1,
-        present_address2: history.state[0].present_address2,
+        present_address1: history.state[0].present_line1,
+        present_address2: history.state[0].present_line2,
         present_country: history.state[0].present_country,
-        present_states: history.state[0].present_states,
+        present_states: history.state[0].present_state,
         present_city: history.state[0].present_city,
         present_district: history.state[0].present_district,
         present_pincode: history.state[0].present_pincode,
@@ -172,6 +173,7 @@ function EditCustomerDetails() {
               });
         }
     }
+    
     const uploadAadharFile=async(e)=>{
         const token = sessionStorage.getItem('token');
         const result = await uploadFile(e);

@@ -24,8 +24,9 @@ function LifeInsuranceTransaction() {
     }
 
     const onSubmit = (values,onSubmitProps)=>{
-        console.log(values)
-        axios.post(CrmforPosService.CrmforPosService.baseURL+`/api/pos/lifeInsuranceTransaction/get-customers-by-date/${user}`,values)
+        // console.log(values)
+        const token = sessionStorage.getItem('token');
+        axios.post(CrmforPosService.CrmforPosService.baseURL+`/api/pos/lifeInsuranceTransaction/get-customers-by-date/${user}`,values,{headers:{Authorization:token}})
         .then(res=>setCustomers(res.data))
         .catch(err=>console.log(err)) 
     }
