@@ -2,6 +2,7 @@ import React from 'react';
 import {BsArrowRight} from  'react-icons/bs'
 
 function ReportsTable(props) {
+   console.log(props.data)
    return (
       <>
           <div className="container-fluid p-0">
@@ -33,7 +34,7 @@ function ReportsTable(props) {
                            <td>{obj.policy_number}</td>
                            <td className="text-center">{obj.premium_payment_mode}</td>
                            <td>{new Date(obj.renewal_date).toLocaleDateString('en-GB')}</td>
-                           <td><BsArrowRight size="1.3em"  onClick={() => props.redirect(obj.customer_pan,props.user)}/></td>
+                           <td><BsArrowRight size="1.3em"  onClick={() => props.redirect(obj,obj.policy_number)}/></td>
                         </tr>
                      )
                   })}

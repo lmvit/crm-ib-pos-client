@@ -202,3 +202,85 @@ export const LifeValidationFunction = (value, files) => {
     
 }
 
+export const RenewalLifeValidationFunction = (value) => {
+    let returnValidation;
+
+    const cashObject = {
+        application_number: yup.string().required("Please select application number"),
+        date_of_entry: yup.date().required("Please select date"),
+        type_of_business: yup.string().required("Please select type of business"),
+        mode_of_payment: yup.string().required("Please select mode of payment"),
+        stage: yup.string().required("Please Select stage"),
+    }
+
+    const checkObject = {
+        cheque_number: yup.string().required("Please enter cheque number"),
+        cheque_account: yup.string().required("Please enter cheque account"),
+        cheque_date: yup.date().required("Please select cheque date").nullable(),
+        bank_name: yup.string().required("Please enter bank name"),
+    }
+
+    const ddObject = {
+        account_number: yup.string().required("Please enter account number"),
+        cheque_number: yup.string().required("Please enter cheque number"),
+        cheque_account: yup.string().required("Please enter cheque account"),
+        cheque_date: yup.date().required("Please select cheque date").nullable(),
+        bank_name: yup.string().required("Please enter bank name"),
+    }
+
+    const onlineObject = {
+        account_number: yup.string().required("Please enter account number"),
+        reference_number: yup.string().required("Please enter reference number"),
+    }
+    switch (value) {
+        case "Cheque":
+            return returnValidation = yup.object({ ...cashObject, ...checkObject })
+        case "DD":
+            return returnValidation = yup.object({ ...cashObject, ...ddObject })
+        case "Online":
+            return returnValidation = yup.object({ ...cashObject, ...onlineObject })
+        default:
+            return returnValidation = yup.object({ ...cashObject })
+    }
+}
+
+export const RenewalGeneralValidationFunction = (value) => {
+    let returnValidation;
+
+    const cashObject = {
+        date_of_entry: yup.string().required("Please select date"),
+        type_of_business: yup.string().required("Please select type of business"),
+        mode_of_payment: yup.string().required("Please select mode of payment"),
+        stage: yup.string().required("Please Select stage"),
+    }
+
+    const checkObject = {
+        cheque_number: yup.string().required("Please enter cheque number"),
+        cheque_account: yup.string().required("Please enter cheque account"),
+        cheque_date: yup.date().required("Please select cheque date").nullable(),
+        bank_name: yup.string().required("Please enter bank name"),
+    }
+
+    const ddObject = {
+        account_number: yup.string().required("Please enter account number"),
+        cheque_number: yup.string().required("Please enter cheque number"),
+        cheque_account: yup.string().required("Please enter cheque account"),
+        cheque_date: yup.date().required("Please select cheque date").nullable(),
+        bank_name: yup.string().required("Please enter bank name"),
+    }
+
+    const onlineObject = {
+        account_number: yup.string().required("Please enter account number"),
+        reference_number: yup.string().required("Please enter reference number"),
+    }
+    switch (value) {
+        case "Cheque":
+            return returnValidation = yup.object({ ...cashObject, ...checkObject })
+        case "DD":
+            return returnValidation = yup.object({ ...cashObject, ...ddObject })
+        case "Online":
+            return returnValidation = yup.object({ ...cashObject, ...onlineObject })
+        default:
+            return returnValidation = yup.object({ ...cashObject })
+    }
+}

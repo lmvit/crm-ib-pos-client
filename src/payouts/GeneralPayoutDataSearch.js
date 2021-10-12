@@ -5,7 +5,7 @@ import * as yup from 'yup';
 import { fetchLifeReportsForPayouts,getPOSPersonType,fetchGeneralReportsForPayouts} from '../helper/api';
 import InsurancePayoutsDetails from './InsurancePayoutsDetails';
 import GeneralInsurancePayouts from './GeneralPayoutDataSearch';
-
+import {useHistory} from 'react-router-dom';
 
 function GeneralPayoutDataSeach() {
 
@@ -15,6 +15,7 @@ function GeneralPayoutDataSeach() {
     const [personType,setPersonType] = useState('');
     const [posAccount,setPosAccount] = useState('');
     const [dates,setDates] = useState([]);
+    const history = useHistory();
 
     useEffect(async() => {
       await getPOSPersonType().then(res=>{setPosAccount(res);setPersonType(res[0].person_type)}).catch(err=>console.log(err))
@@ -36,10 +37,17 @@ function GeneralPayoutDataSeach() {
     ]
 
     const onSubmit = async(values,onSubmitProps) =>{
-      setDates(values);
-      await fetchGeneralReportsForPayouts(values.from_date,values.to_date).then(res=>{if(res.length>0){setPayoutsData(res)}else{alert('No data found')}}).catch(err=>console.log(err))
-       onSubmitProps.resetForm();
-       onSubmitProps.setSubmitting(false); 
+      const fromDateMonth = new Date(values.from_date).getMonth();
+      const toDateMonth = new Date(values.to_date).getMonth();
+      if(fromDateMonth === toDateMonth){
+         setDates(values);
+         await fetchGeneralReportsForPayouts(values.from_date,values.to_date).then(res=>{if(res.length>0){setPayoutsData(res)}else{alert('No data found');history.push('/home/general-insurance-payouts')}}).catch(err=>console.log(err))
+          onSubmitProps.resetForm();
+          onSubmitProps.setSubmitting(false); 
+      }else{
+         alert('Both From Date and To Date must be the same month');
+      }
+     
     }
 
     const classes = "col-12 col-md-6 col-lg-4";
@@ -67,7 +75,6 @@ function GeneralPayoutDataSeach() {
                            )
                         })}
                      </div>
-                     
                      <div className="d-flex justify-content-center">
                         <input type="submit" className="btn btn-dark mt-4" value="submit"/>
                      </div>

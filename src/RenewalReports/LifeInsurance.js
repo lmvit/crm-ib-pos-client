@@ -4,6 +4,7 @@ import axios from 'axios';
 import CrmforPosService from '../config/index';
 import { UserContext } from '../pos/posHome';
 import ReportsTable from './ReportsTable';
+import {getLifeRenewalReportCount} from '../helper/api';
 
 function LifeInsurance() {
    const user = useContext(UserContext);
@@ -16,25 +17,25 @@ function LifeInsurance() {
    useEffect(() => {
       const token = sessionStorage.getItem('token');
     if(user){
-      axios.get(CrmforPosService.CrmforPosService.baseURL+`/api/pos/renewal/get-records/${name}/${name1}/${user}`,{headers:{Authorization:token}})
-      .then(res=>setData(res.data))
+       getLifeRenewalReportCount(name,name1,user).then(res=>setData(res)).catch(err=>console.log(err))
     }else{
        return false;
     }
    }, [user])
-   const redirectToLifeInsuranceTxn = async (id,posId) => {
+   const redirectToLifeInsuranceTxn = async (id) => {
       const token = sessionStorage.getItem('token');
-      axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/life-transactions/customer-details/${id}/${posId}`,{headers:{Authorization:token}})
+      axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/life-transactions/customer-details/${id}`,{headers:{Authorization:token}})
       .then(res=>{
          if(res.data.message === 'customer exists'){
             history.push({
-               pathname:`/home/life-insurance-transactions-data`,
+               pathname:`/home/business-transaction/renewal-life-insurance-transaction`,
                state: res.data.data
            })
          }
       })
       .catch(err=>console.log(err))
   }
+  
    return (
       <>
          <ReportsTable data={data} date={currentDate} redirect={redirectToLifeInsuranceTxn} user={user} title='Life'/>

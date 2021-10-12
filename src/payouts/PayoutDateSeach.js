@@ -5,6 +5,8 @@ import * as yup from 'yup';
 import { fetchLifeReportsForPayouts,getPOSPersonType,fetchGeneralReportsForPayouts} from '../helper/api';
 import InsurancePayoutsDetails from './InsurancePayoutsDetails';
 import GeneralInsurancePayouts from './GeneralPayoutDataSearch';
+import PayoutDialog from '../Transcations/components/PayoutDialog';
+import {useHistory} from 'react-router-dom';
 
 
 function PayoutDateSeach() {
@@ -15,6 +17,8 @@ function PayoutDateSeach() {
     const [personType,setPersonType] = useState('');
     const [posAccount,setPosAccount] = useState('');
     const [dates,setDates] = useState([]);
+    const [saveTransactionsDailog, setSaveTransactionsDailog] = useState({ open: false});
+    const history = useHistory();
 
     useEffect(async() => {
       await getPOSPersonType().then(res=>{setPosAccount(res);setPersonType(res[0].person_type)}).catch(err=>console.log(err))
@@ -37,13 +41,25 @@ function PayoutDateSeach() {
     ]
 
     const onSubmit = async(values,onSubmitProps) =>{
-      setDates(values);
-       await fetchLifeReportsForPayouts(values.from_date,values.to_date).then(res=>{if(res.length>0){setPayoutsData(res)}else{alert('No data found')}}).catch(err=>console.log(err))
-       onSubmitProps.resetForm();
-       onSubmitProps.setSubmitting(false); 
+      //  console.log('values',values);
+       const fromDateMonth = new Date(values.from_date).getMonth();
+       const toDateMonth = new Date(values.to_date).getMonth();
+       if(fromDateMonth === toDateMonth){
+          setDates(values);
+          await fetchLifeReportsForPayouts(values.from_date, values.to_date).then(res => {if (res.data.length > 0) { setPayoutsData(res.data) } else { alert('No data found');history.push('/home/life-insurance-payouts') } }).catch(err => console.log(err))
+          onSubmitProps.resetForm();
+          onSubmitProps.setSubmitting(false);
+       }else{
+          alert('Both From Date and To Date must be the same month');
+       }
+      
     }
 
     const classes = "col-12 col-md-6 col-lg-4";
+
+    const dailogClose = () => {
+      setSaveTransactionsDailog({ open: false });
+  }
 
     return (
         <>
@@ -76,7 +92,8 @@ function PayoutDateSeach() {
                )
             }}
          </Formik>
-         <InsurancePayoutsDetails data={PayoutData} personType={personType} account={posAccount} dates={dates} path={activePath}/>
+        {PayoutData.length > 0 ? <InsurancePayoutsDetails data={PayoutData} personType={personType} account={posAccount} dates={dates} path={activePath}/> : null}
+         {/* {saveTransactionsDailog ? <PayoutDialog close={dailogClose}/> : null} */}
         </>
     )
 }

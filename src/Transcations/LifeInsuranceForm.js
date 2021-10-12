@@ -11,6 +11,7 @@ import axios from 'axios';
 import CrmforPosService from '../config/index';
 import { UserContext } from '../pos/posHome';
 import {fetchLifePptRevenue} from '../helper/api';
+import CustomerData from './CustomerData';
 
 const LifeInsuranceTransaction = () => {
     const [customerData, setCustomerData] = useState({ ...customerInitialValue });
@@ -92,28 +93,32 @@ const LifeInsuranceTransaction = () => {
     }
 
     let companyFunction = async (value) => {
-        const response = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/life-transactions/products', { company_name: value });
+        const token = sessionStorage.getItem('token');
+        const response = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/life-transactions/products', { company_name: value },{headers:{Authorization: token}});
         if (response.status === 200) {
             setProduct(response.data.data)
         }
     }
 
     let productFunction = async (value, formikValues) => {
-        const response = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/life-transactions/plan-type', { company_name: formikValues.company_name, product_name: value });
+        const token = sessionStorage.getItem('token');
+        const response = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/life-transactions/plan-type', { company_name: formikValues.company_name, product_name: value },{headers:{Authorization: token}});
         if (response.status === 200) {
             setPlanType(response.data.data)
         }
     }
 
     let planTypeFunction = async (value, formikValues) => {
-        const response = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/life-transactions/plan-name', { company_name: formikValues.company_name, product_name: formikValues.product_name, plan_type: value });
+        const token = sessionStorage.getItem('token');
+        const response = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/life-transactions/plan-name', { company_name: formikValues.company_name, product_name: formikValues.product_name, plan_type: value},{headers:{Authorization: token}});
         if (response.status === 200) {
             setPlanName(response.data.data)
         }
     }
 
     let planNameFunction = async (value, formikValues) => {
-        const response = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/life-transactions/ppt-revenue', { company_name: formikValues.company_name, product_name: formikValues.product_name, plan_type: formikValues.plan_type, plan_name: value });
+        const token = sessionStorage.getItem('token');
+        const response = await axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/life-transactions/ppt-revenue', { company_name: formikValues.company_name, product_name: formikValues.product_name, plan_type: formikValues.plan_type, plan_name: value },{headers:{Authorization: token}});
         if (response.status === 200) {
             // console.log(response.data.data)
             setPptRevenue(response.data.data)
@@ -205,25 +210,7 @@ const LifeInsuranceTransaction = () => {
             <Formik enableReinitialize initialValues={customerData} >
                 <div className='px-3'>
                     <Form>
-                        <div className="d-flex flex-wrap pt-3">
-                            <DefaultInput name="title" label="Title" />
-                            <DefaultInput name="first_name" label="First Name" />
-                            <DefaultInput name="last_name" label="Last Name" />
-                            <DefaultInput name="mobile" label="Mobile" />
-                            <DefaultInput name="email" label="Email" />
-                            <DefaultInput name="gender" label="Gender" />
-                            <DefaultInput name="pan_number" label="Pan Card Number" />
-                            <DefaultInput name="aadhar_number" label="Aadhar Card Number" />
-                            <DefaultInput name="location" label="Location" />
-                            <DefaultInput name="branch" label="Branch" />
-                            <DefaultInput name="present_line1" label="Line 1" />
-                            <DefaultInput name="present_line2" label="Line 2" />
-                            <DefaultInput name="present_city" label="City" />
-                            <DefaultInput name="present_district" label="District" />
-                            <DefaultInput name="present_state" label="State" />
-                            <DefaultInput name="present_country" label="Country" />
-                            <DefaultInput name="present_pincode" label="Pincode" />
-                        </div>
+                        <CustomerData/>
                     </Form>
                 </div>
             </Formik>

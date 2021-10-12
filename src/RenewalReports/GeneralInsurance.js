@@ -4,6 +4,8 @@ import axios from 'axios';
 import CrmforPosService from '../config/index';
 import { UserContext } from '../pos/posHome';
 import ReportsTable from './ReportsTable';
+import {getLifeRenewalReportCount} from '../helper/api';
+import { date } from 'yup/lib/locale';
 
 function LifeInsurance() {
    const user = useContext(UserContext);
@@ -16,25 +18,34 @@ function LifeInsurance() {
    useEffect(() => {
       const token = sessionStorage.getItem('token');
     if(user){
-      axios.get(CrmforPosService.CrmforPosService.baseURL+`/api/pos/renewal/get-records/${name}/${name1}/${user}`,{headers:{Authorization : token}})
-      .then(res=>setData(res.data))
+      getLifeRenewalReportCount(name,name1,user).then(res=>  setData(
+         res.filter(element => element.type_of_business !== 'rollover' && element.type_of_business !== 'cancelled'))).catch(err=>console.log(err))
     }else{
        return false;
     }
    }, [user])
-   const redirectToLifeInsuranceTxn = async (id,posId) => {
-      const token = sessionStorage.getItem('token');
-      axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/life-transactions/customer-details/${id}/${posId}`,{headers:{Authorization:token}})
-      .then(res=>{
-         if(res.data.message === 'customer exists'){
+   const redirectToLifeInsuranceTxn = async (data,id) => {
+      console.log(data,id);
+      const obj = {
+         customerData: data,
+         policyNumber: id,
+         business : 'renewal'
+     }
+       const token = sessionStorage.getItem('token');
+      axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/life-transactions/customer-details/${data.customer_pan}`,{headers:{Authorization:token}})
+       .then(res=>{
+          console.log(res.data)
+          if(res.data.message === 'customer exists'){
             history.push({
-               pathname:`/home/general-insurance-transactions-data`,
-               state: res.data.data
+               pathname:`/home/business-transaction/renewal-general-insurance-transaction`,
+               state: obj
            })
+         }else{
+            alert(res.data)
          }
-      })
-      .catch(err=>console.log(err))
+      }).catch(err=>console.log(err))
   }
+
    return (
       <>
          <ReportsTable data={data} date={currentDate} redirect={redirectToLifeInsuranceTxn} user={user} title='General'/>

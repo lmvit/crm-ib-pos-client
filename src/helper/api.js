@@ -11,19 +11,18 @@ const headersFunction = () => {
     return headers;
 }
   
-
 export const fetchLocations = async () => {
     const { data } = await axios.get(defaultRouter+ `/api/life-insurance-reports/locations`,  headersFunction());
     return data;
 }
 
-export const zonalReports = async ( values ) => {
-    const { data } = await axios.post(defaultRouter+ `/api/life-insurance-reports/zonal-reports`, values, headersFunction());
-    return data;
-}
+// export const zonalReports = async ( values ) => {
+//     const { data } = await axios.post(defaultRouter+ `/api/life-insurance-reports/zonal-reports`, values, headersFunction());
+//     return data;
+// }
 
 export const fetchLifeReportsForPayouts =async(from_date,to_date)=>{
-    const {data} = await axios.get(defaultRouter + `/api/payouts/get-life-payouts/${from_date}/${to_date}`,headersFunction())
+    const {data} = await axios.get(defaultRouter + `/api/payouts/get-life-insurance-payouts/${from_date}/${to_date}`,headersFunction())
     return data;
 }
 
@@ -48,3 +47,10 @@ export const getPOSPersonType = async()=>{
     const { data } = await axios.get(defaultRouter + `/api/payouts/get-person-type`, headersFunction());
     return data;
 }
+
+// Life Insurance Renewal Report count
+export const getLifeRenewalReportCount = async(name,name1) =>{
+    const {data} = await axios.get(defaultRouter +`/api/pos/renewal/get-records/${name}/${name1}`, headersFunction());
+    return data;
+}
+

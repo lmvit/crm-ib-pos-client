@@ -13,10 +13,13 @@ import EditCustomerDetails from '../provide-business/EditCustomerDetails';
 import Routing from '../protectedRoute/Routing';
 import axios from 'axios';
 import CrmforPosService from '../../src/config/index';
-import GeneralInsuranceTransaction from '../Transcations/generalInsuranceSearch';
+// import GeneralInsuranceTransaction from '../Transcations/generalInsuranceSearch';
+import GeneralInsuranceTransaction from '../Transcations/general-insurance-data-search';
 import GeneralInsuranceData from '../Transcations/GeneralInsuranceForm';
+import RenewalGeneralInsuranceData from '../Transcations/RenewalGeneralInsuranceTransaction';
 import LifeInsuranceTransaction from '../Transcations/LifeInsuranceSearch';
 import LifeInsuranceData from '../Transcations/LifeInsuranceForm';
+// import RenewalLifeInsuranceData from '../Transcations/RenewalLifeInsuranceTransaction';
 import LifeInsurancePosReports from '../posReports/Life-insurance-pos-reports';
 import GeneralInsurancePosReports from '../posReports/Life-insurance-pos-reports';
 import Home from './Home';
@@ -24,6 +27,8 @@ import LifeInsuranceRenewalReports from '../RenewalReports/LifeInsurance';
 import GeneralInsuranceRenewalReports from '../RenewalReports/GeneralInsurance';
 import PayoutDateSeach from '../payouts/PayoutDateSeach';
 import GeneralPayoutDataSeach from '../payouts/GeneralPayoutDataSearch';
+import RenewalLifeInsuranceTransaction from '../Transcations/RenewalLifeInsuranceTransaction';
+import RenewalGeneralInsuranceTransaction from '../Transcations/RenewalGeneralInsuranceTransaction';
 
 export const UserContext = React.createContext();
 const PosHome = (props) => {
@@ -171,7 +176,9 @@ const PosHome = (props) => {
                   <Routing path="/home/cutomer-details" component={CustomerDetails} />
                   <Routing path="/home/edit-customer-details" component={EditCustomerDetails} />
                   <Routing path="/home/business-transaction/life-insurance-transaction" component={LifeInsuranceTransaction}/>
+                  <Routing path ='/home/business-transaction/renewal-life-insurance-transaction' component={RenewalLifeInsuranceTransaction}/>
                   <Routing path="/home/business-transaction/general-insurance-transaction" component={GeneralInsuranceTransaction}/>
+                  <Routing path="/home/business-transaction/renewal-general-insurance-transaction" component={RenewalGeneralInsuranceTransaction} />
                   <Routing path="/home/life-insurance-transactions-data" component={LifeInsuranceData}/>
                   <Routing path="/home/general-insurance-transactions-data" component={GeneralInsuranceData}/>
                   <Routing path="/home/life-transactions-pos-reports" component={LifeInsurancePosReports}/>

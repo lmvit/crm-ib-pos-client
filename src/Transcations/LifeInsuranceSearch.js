@@ -26,7 +26,6 @@ function LifeInsuranceSearch() {
       if (customerData.length > 0) {
          axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/life-transactions/check-transaction-count/${searchInput}`, { headers: { Authorization: token } })
             .then(res => {
-               console.log('res',res);
                if (res.data.data[0].count === '0') {
                   history.push({
                      pathname: `/home/life-insurance-transactions-data`,
@@ -45,7 +44,7 @@ function LifeInsuranceSearch() {
                               const result = window.confirm('Click ok to submit your renewal transaction details');
                               if(result){
                                  history.push({
-                                    pathname: `/home/life-insurance-transactions-data`,
+                                    pathname: `/home/business-transaction/renewal-life-insurance-transaction`,
                                     state: customerData
                                  })
                               }
@@ -63,7 +62,7 @@ function LifeInsuranceSearch() {
       } else {
          const token = sessionStorage.getItem('token');
          const searchInput = inputValue.current.value;
-         axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/life-transactions/customer-details/${searchInput}/${posId}`, { headers: { Authorization: token } })
+         axios.get(CrmforPosService.CrmforPosService.baseURL + `/api/life-transactions/customer-details/${searchInput}`, { headers: { Authorization: token } })
             .then(res => {
                if (res.data.message === 'customer exists') {
                   const result = window.alert(res.data.message + ' ' + `please wait redirecting`);

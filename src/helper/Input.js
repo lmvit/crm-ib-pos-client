@@ -23,7 +23,6 @@ export const Input = (props) => {
                                     :
                                     <input type="text" placeholder={label} id={name} {...field} readOnly={readOnly} value={form.values[name] ? form.values[name] : ''}  onChange={(e) => { form.handleChange(e); handler && handler(e.target.value) }} className="form-control" />
                             }
-
                         </div>
                     )
                 }}
@@ -61,7 +60,7 @@ export const Select = (props) => {
 // 
 export const DefaultInput = (props) => {
     const { name, label, required } = props;
-    return <div className="form-group col-12 col-md-4 col-xl-3">
+    return <div className="form-group col-12 col-md-4 col-xl-4">
         <div className="p-1">
             <label htmlFor={name} className="h6">{label} {required ? <AiFillStar style={{ color: "red", width: "8px" }} /> : null}</label>
         </div>
@@ -108,7 +107,7 @@ export const PermanentInput = (props) => {
                         <div>
                             {
                                 present ?  <input {...field}   type="text" id={name} className="form-control"  value={form.values[present_name]}  />
-                                : <input  {...field} type="text" id={name} className="form-control"   />
+                                : <input  {...field} type="text" id={name} className="form-control"  placeholder={label} />
                             }
                             
                         </div>

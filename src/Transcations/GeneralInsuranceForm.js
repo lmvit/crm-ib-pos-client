@@ -8,7 +8,9 @@ import { customerInitialValue, GeneralInitialValueFunction, TransactionCustomerF
 import AlertDialog from './components/Dailog';
 import axios from 'axios';
 import CrmforPosService from '../config/index';
-import {UserContext} from '../pos/posHome';                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+import {UserContext} from '../pos/posHome'; 
+import CustomerData from './CustomerData'; 
+import ModeOfPayment from './ModeOfPayment';                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 
 const GeneralInsuranceTransaction = () => {
     const [data, setData] = useState({ ...customerInitialValue });
@@ -60,43 +62,11 @@ const GeneralInsuranceTransaction = () => {
                     companiesArray.push(item.company_name);
                 })
             }
-
             setCompanies([...new Set(companiesArray)]);
-
         } catch (e) {
             alert(e)
         }
-
     }, [])
-
-    const mopHandler = (value) => {
-        switch (value) {
-            case "Cheque":
-                return <Fragment>
-                    <Input name="cheque_number" label="Cheque Number" />
-                    <Input name="cheque_account" label="Cheque Account" />
-                    <DateField name="cheque_date" label="Cheque Date" />
-                    <Input name="bank_name" label="Bank Name" />
-                </Fragment>
-            case "DD":
-                return <Fragment>
-                    <Input name="account_number" label="Account Number" />
-                    <Input name="cheque_number" label="Cheque Number" />
-                    <Input name="cheque_account" label="Cheque Account" />
-                    <DateField name="cheque_date" label="Cheque Date" />
-                    <Input name="bank_name" label="Bank Name" />
-                </Fragment>
-            case "Online":
-                return <Fragment>
-                    <Input name="account_number" label="Account Number" />
-                    <Input name="reference_number" label="Reference Number" />
-                </Fragment>
-            case "Cash":
-                break;
-            default:
-                break;
-        }
-    }
 
     const TravelMode = function () {
         const obj = [
@@ -250,23 +220,7 @@ const GeneralInsuranceTransaction = () => {
                 <div className='px-2'>
                     <Form>
                         <div className="d-flex flex-wrap pt-3">
-                            <DefaultInput name="title" label="Title" />
-                            <DefaultInput name="first_name" label="First Name" />
-                            <DefaultInput name="last_name" label="Last Name" />
-                            <DefaultInput name="mobile" label="Mobile" />
-                            <DefaultInput name="email" label="Email" />
-                            <DefaultInput name="gender" label="Gender" />
-                            <DefaultInput name="pan_number" label="Pan Card Number" />
-                            <DefaultInput name="aadhar_number" label="Aadhar Card Number" />
-                            <DefaultInput name="location" label="Location" />
-                            <DefaultInput name="branch" label="Branch" />
-                            <DefaultInput name="present_line1" label="Line 1" />
-                            <DefaultInput name="present_line2" label="Line 2" />
-                            <DefaultInput name="present_city" label="City" />
-                            <DefaultInput name="present_district" label="City" />
-                            <DefaultInput name="present_state" label="State" />
-                            <DefaultInput name="present_country" label="Country" />
-                            <DefaultInput name="present_pincode" label="Pincode" />
+                            <CustomerData/>
                         </div>
                     </Form>
                 </div>
@@ -307,7 +261,7 @@ const GeneralInsuranceTransaction = () => {
                                     <Select name="type_of_business" label="Type of Business" required>
                                         <option value="">Select</option>
                                         <option value="New Business">New Business</option>
-                                        <option value="Renewel">Renewel</option>
+                                        <option value="Renewal">Renewal</option>
                                     </Select>
                                     <Select name="mode_of_payment" label="Mode of Payment" required handler={setMop}  >
                                         <option >Select</option>
@@ -317,7 +271,7 @@ const GeneralInsuranceTransaction = () => {
                                         <option value="Cash">Cash</option>
                                     </Select>
                                     {
-                                        formikProps.values.mode_of_payment ? mopHandler(formikProps.values.mode_of_payment) : null
+                                        formikProps.values.mode_of_payment ? ModeOfPayment(formikProps.values.mode_of_payment) : null
                                     }
                                     <Input name="policy_number" label="Policy Number" />
                                     <Select name="stage" label="Stage" >

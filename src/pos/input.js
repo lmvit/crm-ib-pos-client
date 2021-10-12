@@ -17,6 +17,16 @@ export const DefaultInput = (props) => {
   </div>
 }
 
+export const DefaultInputWithoutLabel = (props) => {
+  const { name, label, required, type,classes,...rest} = props;
+  return <div className={classes} style={{height:'65px'}}>
+    <div>
+      <Field type={type} {...rest} name={name} placeholder={label} autoComplete="off" />
+      <ErrorMessage name={name} render={message => <span className="text-danger">{message}</span>} />
+    </div>
+  </div>
+}
+
 export const Select = (props)=>{
   const {name,label,required,options,classes,...rest}= props;
   return <div className={classes} style={{height:'100px'}}>
@@ -39,7 +49,7 @@ export const Select = (props)=>{
 
 export const PermanentInput = (props) => {
   const { name, label, required, type,classes,...rest} = props;
-  // console.log(props)
+  console.log(props)
   return <div className={classes} style={{height:'100px'}}>
     <div className="p-1">
       <label htmlFor={name} className="h6">{label} 

@@ -32,6 +32,24 @@ html {
   justify-content: center;
   align-items: center;
 }
+
+.otp-background{
+  /* background-color: #f6f6f6; */
+  background-color: #000000b3;
+  height: auto !important;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.otp-login-form{
+  box-shadow: 2px -1px 8px 2px rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  height: 330px;
+  border-radius: 10px;
+}
 .login-form {
   background: #f1f1f1;
   height: 370px;
@@ -61,6 +79,18 @@ html {
   justify-content: space-between;
   position: fixed;
   z-index: 9999;
+}
+
+.input_otp{
+  border-top: none;
+  border-right:none;
+  border-left: none;
+  padding-left: 1px !important;
+  border-bottom: 1px solid rgb(29, 28, 28);
+}
+
+.input_otp:focus{
+  outline: none;
 }
 
 table thead {

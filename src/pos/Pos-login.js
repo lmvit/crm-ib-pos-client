@@ -19,24 +19,48 @@ function Poslogin() {
         password: ''
     }
 
-    const onSubmit = async (value,onSubmitProps) => {
+    const onSubmit = async (value, onSubmitProps) => {
         // const token = sessionStorage.getItem('token');
-        axios.post(CrmforPosService.CrmforPosService.baseURL+'/api/pos/login/pos-login',value)
-        .then(res=>{
-            if(res.data.message === 'failed'){
-                onSubmitProps.resetForm();
-                onSubmitProps.setSubmitting(false);
-                return window.alert('Invalid POS ID or Passsword')
-            }else{
-                // console.log(res.data);
-                sessionStorage.setItem('token',res.data.accessToken)
-                history.push('/home/reports-count');
-                onSubmitProps.resetForm();
-                onSubmitProps.setSubmitting(false);
-                return window.alert('Login Successfully');
-            }
-        })
-        .catch(err=>console.log(err))
+        axios.post(CrmforPosService.CrmforPosService.baseURL + '/api/pos/login/pos-login', value)
+            .then(res => {
+                if (res.data.message === 'failed') {
+                    onSubmitProps.resetForm();
+                    onSubmitProps.setSubmitting(false);
+                    return window.alert('Invalid POS ID or Passsword')
+                } else {
+                    // console.log(res.data);
+                    const posId = value.posId;
+                    sessionStorage.setItem('token', res.data.accessToken);
+                    const token = sessionStorage.getItem('token');
+                    axios.post(CrmforPosService.CrmforPosService.baseURL + `/api/pos/login/get-mobile-number`, { posId }, { headers: { Authorization: token } })
+                        .then(res => {
+                            if (res.data.message === 'mobile exists') {
+                                const phone = '91' + res.data.number[0].mobile_number;
+                                axios.post(CrmforPosService.CrmforPosService.baseURL + `/api/otp-auth/send-otp`, { phone }, { headers: { Authorization: token } })
+                                    .then(res => {
+                                        if (res) {
+                                            const obj = {
+                                                phone: res.data.phone,
+                                                hash: res.data.hash
+                                            }
+                                            history.push({
+                                                pathname: `/login-otp-authentication/${token}`,
+                                                state: obj
+                                            })
+                                            onSubmitProps.resetForm();
+                                            onSubmitProps.setSubmitting(false);
+                                            return window.alert('OTP has been sent your registered mobile number');
+                                        }
+                                    })
+                                    .catch(err => console.log(err))
+                            } else {
+                                alert(res.data.message);
+                            }
+                        })
+                        .catch(err => console.log(err))
+                }
+            })
+            .catch(err => console.log(err))
     }
 
     const posLoginForm = [
@@ -61,10 +85,10 @@ function Poslogin() {
                                     <h4 className="text-left my-2">Login as POS</h4>
                                     <div className="icon"></div>
                                     <div className="justify-content-center col-12 m-auto">
-                                        {posLoginForm.map((obj,index)=>{
-                                            return(
+                                        {posLoginForm.map((obj, index) => {
+                                            return (
                                                 <DefaultInput key={index} type={obj.type} classes={classes} name={obj.name} label={obj.label} required
-                                                className={formik.touched[obj.name] && formik.errors[obj.name] ? "is-invalid form-control":"form-control"}/>
+                                                    className={formik.touched[obj.name] && formik.errors[obj.name] ? "is-invalid form-control" : "form-control"} />
                                             )
                                         })}
                                     </div>
